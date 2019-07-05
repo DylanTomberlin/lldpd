@@ -125,6 +125,49 @@ struct lldpd_dot3_power {
 	u_int8_t		priority;
 	u_int16_t		requested;
 	u_int16_t		allocated;
+	/*802.3bt extentsion*/
+	u_int16_t		requestedA;
+	u_int16_t		requestedB;
+	u_int16_t		allocatedA;
+	u_int16_t		allocatedB;
+	/*Change in organization to more accurately reflect more complicated standard*/
+	union powerStatus {
+		struct {
+			u_int8_t	powerClassExt		: 4;
+			u_int8_t	powerClassB		: 3;
+			u_int8_t	powerClassA		: 3;
+			u_int8_t	psePowerPairs		: 2;
+			u_int8_t	pdPoweredStatus		: 2;
+			u_int8_t	psePoweringStatus	: 2;
+		} bits;
+		u_int16_t	octets;
+	};
+	union systemSetup {
+		struct {
+			u_int8_t	pdLoad		: 1;
+			u_int8_t 	powerTypeExt	: 3;
+			u_int8_t 	reserved	: 4;
+		} bits;
+		u_int8_t 	octets;
+	};
+	u_int16_t		pseMaxAvailPower;
+	union autoclass {
+		struct {
+			u_int8_t	request			: 1;
+			u_int8_t	completed		: 1;
+			u_int8_t	pseAutoclassSupport 	: 1;
+			u_int8_t	reserved	: 5	: 1;
+		} bits;
+		u_int8_t	octets;
+	};
+	union powerDown {
+		struct {
+			u_int32_t	time	: 18;
+			u_int16_t	request : 6;
+		} bits;
+		//TODO confirm this is truely making it only 3 octets long
+		u_int32_t	octets : 24;
+	};
 };
 MARSHAL(lldpd_dot3_power);
 #endif
