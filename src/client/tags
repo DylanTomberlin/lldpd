@@ -1,0 +1,271 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ARRAY	json_writer.c	/^	ARRAY,$/;"	e	enum:tag	file:
+BOOL	json_writer.c	/^	BOOL,$/;"	e	enum:tag	file:
+CAN_EXECUTE	commands.c	360;"	d	file:
+CESC	lldpcli.c	97;"	d	file:
+CURRENT	tokenizer.c	71;"	d	file:
+DISPLAY_BRIEF	client.h	120;"	d
+DISPLAY_DETAILS	client.h	122;"	d
+DISPLAY_NORMAL	client.h	121;"	d
+ESCAPED	tokenizer.c	72;"	d	file:
+N	display.c	/^N(const char *str) {$/;"	f	file:
+NEWLINE	client.h	63;"	d
+NEWLINE	client.h	66;"	d
+OBJECT	json_writer.c	/^	OBJECT$/;"	e	enum:tag	file:
+SEP	kv_writer.c	26;"	d	file:
+STRING	json_writer.c	/^	STRING,$/;"	e	enum:tag	file:
+SUPPRESS_LEAK	client.h	34;"	d
+SUPPRESS_LEAK	client.h	36;"	d
+_CLIENT_H	client.h	19;"	d
+_WRITER_H	writer.h	19;"	d
+__progname	lldpcli.c	40;"	d	file:
+_cmd_complete	lldpcli.c	/^_cmd_complete(int all)$/;"	f	file:
+_cmd_medlocation	conf-med.c	/^_cmd_medlocation(struct lldpctl_conn_t *conn,$/;"	f	file:
+_commands_execute	commands.c	/^_commands_execute(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+arg	commands.c	/^	void *arg;		\/**< Magic argument for the previous two functions *\/$/;"	m	struct:cmd_node	file:
+argc	commands.c	/^	int argc;		\/**< Number of argument in the command *\/$/;"	m	struct:cmd_env	file:
+argp	commands.c	/^	int argp;		\/**< Current argument *\/$/;"	m	struct:cmd_env	file:
+argv	commands.c	/^	const char **argv;	\/**< Arguments *\/$/;"	m	struct:cmd_env	file:
+attr	writer.h	/^	void	(*attr)(struct writer *, const char * tag, const char * descr, const char * value);$/;"	m	struct:writer
+attrs	text_writer.c	/^	int	attrs;$/;"	m	struct:txt_writer_private	file:
+boolean	json_writer.c	/^		int boolean;	\/* BOOL *\/$/;"	m	union:element::__anon1	file:
+candidate_word	commands.c	/^struct candidate_word {$/;"	s	file:
+cmd_agent_type	conf-lldp.c	/^cmd_agent_type(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_bondslave_srcmac_type	conf-system.c	/^cmd_bondslave_srcmac_type(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_chassis_cap_advertise	conf-lldp.c	/^cmd_chassis_cap_advertise(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_chassis_mgmt_advertise	conf-lldp.c	/^cmd_chassis_mgmt_advertise(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_check_application_but_no	conf-med.c	/^cmd_check_application_but_no(struct cmd_env *env, void *arg)$/;"	f	file:
+cmd_check_env	commands.c	/^cmd_check_env(struct cmd_env *env, void *key)$/;"	f
+cmd_check_env_power	conf-power.c	/^cmd_check_env_power(struct cmd_env *env, void *nothing)$/;"	f	file:
+cmd_check_no_add_env	conf-lldp.c	/^cmd_check_no_add_env(struct cmd_env *env, void *arg)$/;"	f	file:
+cmd_check_no_detailed_nor_summary	show.c	/^cmd_check_no_detailed_nor_summary(struct cmd_env *env, void *arg)$/;"	f	file:
+cmd_check_no_env	commands.c	/^cmd_check_no_env(struct cmd_env *env, void *key)$/;"	f
+cmd_check_no_replace_env	conf-lldp.c	/^cmd_check_no_replace_env(struct cmd_env *env, void *arg)$/;"	f	file:
+cmd_check_pd	conf-power.c	/^cmd_check_pd(struct cmd_env *env, void *arg)$/;"	f	file:
+cmd_check_pse	conf-power.c	/^cmd_check_pse(struct cmd_env *env, void *arg)$/;"	f	file:
+cmd_check_type	conf-power.c	/^cmd_check_type(struct cmd_env *env, const char *type)$/;"	f	file:
+cmd_check_type_but_no	conf-power.c	/^cmd_check_type_but_no(struct cmd_env *env, void *arg)$/;"	f	file:
+cmd_check_typeat_but_no	conf-power.c	/^cmd_check_typeat_but_no(struct cmd_env *env, void *arg)$/;"	f	file:
+cmd_complete	lldpcli.c	/^cmd_complete(int count, int ch)$/;"	f	file:
+cmd_custom_tlv_set	conf-lldp.c	/^cmd_custom_tlv_set(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_dot3power	conf-power.c	/^cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_env	commands.c	/^struct cmd_env {$/;"	s	file:
+cmd_env_el	commands.c	/^struct cmd_env_el {$/;"	s	file:
+cmd_env_stack	commands.c	/^struct cmd_env_stack {$/;"	s	file:
+cmd_exec	lldpcli.c	/^cmd_exec(lldpctl_conn_t *conn, const char *fmt, int argc, const char **argv)$/;"	f	file:
+cmd_exit	lldpcli.c	/^cmd_exit(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_faststart	conf-med.c	/^cmd_faststart(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_help	lldpcli.c	/^cmd_help(int count, int ch)$/;"	f	file:
+cmd_hostname	conf-system.c	/^cmd_hostname(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_iface_pattern	conf-system.c	/^cmd_iface_pattern(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_iface_promisc	conf-system.c	/^cmd_iface_promisc(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_iterate_on_interfaces	commands.c	/^cmd_iterate_on_interfaces(struct lldpctl_conn_t *conn, struct cmd_env *env)$/;"	f
+cmd_iterate_on_ports	commands.c	/^cmd_iterate_on_ports(struct lldpctl_conn_t *conn, struct cmd_env *env, const char **name)$/;"	f
+cmd_management	conf-system.c	/^cmd_management(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_maxneighs	conf-system.c	/^cmd_maxneighs(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_medlocation_address	conf-med.c	/^cmd_medlocation_address(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_medlocation_coordinate	conf-med.c	/^cmd_medlocation_coordinate(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_medlocation_elin	conf-med.c	/^cmd_medlocation_elin(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_medpolicy	conf-med.c	/^cmd_medpolicy(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_medpower	conf-power.c	/^cmd_medpower(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_node	commands.c	/^struct cmd_node {$/;"	s	file:
+cmd_pause	lldpcli.c	/^cmd_pause(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_pause_resume	lldpcli.c	/^cmd_pause_resume(lldpctl_conn_t *conn, int pause)$/;"	f	file:
+cmd_perm_iface_pattern	conf-system.c	/^cmd_perm_iface_pattern(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_port_descr	conf-lldp.c	/^cmd_port_descr(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_portid_type	conf-lldp.c	/^cmd_portid_type(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_portid_type_local	conf-lldp.c	/^cmd_portid_type_local(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_restrict_ports	commands.c	/^cmd_restrict_ports(struct cmd_node *root)$/;"	f
+cmd_restrict_protocol	commands.c	/^cmd_restrict_protocol(struct cmd_node *root)$/;"	f
+cmd_resume	lldpcli.c	/^cmd_resume(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_show_chassis	show.c	/^cmd_show_chassis(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_show_configuration	show.c	/^cmd_show_configuration(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_show_interface_stats	show.c	/^cmd_show_interface_stats(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_show_interfaces	show.c	/^cmd_show_interfaces(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_show_neighbors	show.c	/^cmd_show_neighbors(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_status	conf-lldp.c	/^cmd_status(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_store_app_env_value_and_pop2	conf-med.c	/^cmd_store_app_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_store_class_env_value_and_pop2	conf-power.c	/^cmd_store_class_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_store_env	commands.c	/^cmd_store_env(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f
+cmd_store_env_and_pop	commands.c	/^cmd_store_env_and_pop(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f
+cmd_store_env_value	commands.c	/^cmd_store_env_value(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f
+cmd_store_env_value_and_pop	commands.c	/^cmd_store_env_value_and_pop(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f
+cmd_store_env_value_and_pop2	commands.c	/^cmd_store_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f
+cmd_store_env_value_and_pop3	commands.c	/^cmd_store_env_value_and_pop3(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f
+cmd_store_powerpairs_env_value_and_pop2	conf-power.c	/^cmd_store_powerpairs_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_store_prio_env_value_and_pop2	conf-med.c	/^cmd_store_prio_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_store_prio_env_value_and_pop2	conf-power.c	/^cmd_store_prio_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_store_something_env_value	commands.c	/^cmd_store_something_env_value(const char *what,$/;"	f
+cmd_store_something_env_value_and_pop2	commands.c	/^cmd_store_something_env_value_and_pop2(const char *what,$/;"	f
+cmd_store_status_env_value	conf-lldp.c	/^cmd_store_status_env_value(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_system_chassisid	conf-system.c	/^cmd_system_chassisid(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_system_description	conf-system.c	/^cmd_system_description(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_txdelay	conf-lldp.c	/^cmd_txdelay(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_txhold	conf-lldp.c	/^cmd_txhold(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_update	lldpcli.c	/^cmd_update(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_update_descriptions	conf-system.c	/^cmd_update_descriptions(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmd_watch_neighbors	show.c	/^cmd_watch_neighbors(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f	file:
+cmdenv_arg	commands.c	/^cmdenv_arg(struct cmd_env *env)$/;"	f
+cmdenv_free	commands.c	/^cmdenv_free(struct cmd_env *env)$/;"	f	file:
+cmdenv_get	commands.c	/^cmdenv_get(struct cmd_env *env, const char *key)$/;"	f
+cmdenv_pop	commands.c	/^cmdenv_pop(struct cmd_env *env, int n)$/;"	f
+cmdenv_push	commands.c	/^cmdenv_push(struct cmd_env *env, struct cmd_node *node)$/;"	f	file:
+cmdenv_put	commands.c	/^cmdenv_put(struct cmd_env *env,$/;"	f
+cmdenv_top	commands.c	/^cmdenv_top(struct cmd_env *env)$/;"	f	file:
+commands_complete	commands.c	/^commands_complete(struct cmd_node *root, int argc, const char **argv,$/;"	f
+commands_execute	commands.c	/^commands_execute(struct lldpctl_conn_t *conn, struct writer *w,$/;"	f
+commands_free	commands.c	/^commands_free(struct cmd_node *root)$/;"	f
+commands_hidden	commands.c	/^commands_hidden(struct cmd_node *node)$/;"	f
+commands_new	commands.c	/^commands_new(struct cmd_node *root,$/;"	f
+commands_privileged	commands.c	/^commands_privileged(struct cmd_node *node)$/;"	f
+commands_root	commands.c	/^commands_root(void)$/;"	f
+contains	misc.c	/^contains(const char *list, const char *element)$/;"	f
+ctlname	lldpcli.c	/^const char *ctlname = NULL;$/;"	v
+current	json_writer.c	/^	struct element *current; \/* should always be an object *\/$/;"	m	struct:json_writer_private	typeref:struct:json_writer_private::element	file:
+data	writer.h	/^	void	(*data)(struct writer *, const char * data);$/;"	m	struct:writer
+depth	xml_writer.c	/^	ssize_t depth;$/;"	m	struct:xml_writer_private	file:
+display_age	display.c	/^display_age(time_t lastchange)$/;"	f	file:
+display_autoneg	display.c	/^display_autoneg(struct writer * w, int advertised, int bithd, int bitfd, char *desc)$/;"	f	file:
+display_cap	display.c	/^display_cap(struct writer * w, lldpctl_atom_t *chassis, u_int8_t bit, char *symbol)$/;"	f	file:
+display_chassis	display.c	/^display_chassis(struct writer* w, lldpctl_atom_t* chassis, int details)$/;"	f	file:
+display_configuration	display.c	/^display_configuration(lldpctl_conn_t *conn, struct writer *w)$/;"	f
+display_custom_tlvs	display.c	/^display_custom_tlvs(struct writer* w, lldpctl_atom_t* neighbor)$/;"	f	file:
+display_interface	display.c	/^display_interface(lldpctl_conn_t *conn, struct writer *w, int hidden,$/;"	f
+display_interface_stats	display.c	/^display_interface_stats(lldpctl_conn_t *conn, struct writer *w,$/;"	f
+display_interfaces	display.c	/^display_interfaces(lldpctl_conn_t *conn, struct writer *w,$/;"	f
+display_interfaces_stats	display.c	/^display_interfaces_stats(lldpctl_conn_t *conn, struct writer *w,$/;"	f
+display_local_chassis	display.c	/^display_local_chassis(lldpctl_conn_t *conn, struct writer *w,$/;"	f
+display_local_interfaces	display.c	/^display_local_interfaces(lldpctl_conn_t *conn, struct writer *w,$/;"	f
+display_local_ttl	display.c	/^display_local_ttl(struct writer *w, lldpctl_conn_t *conn, int details)$/;"	f	file:
+display_med	display.c	/^display_med(struct writer *w, lldpctl_atom_t *port, lldpctl_atom_t *chassis)$/;"	f	file:
+display_med_capability	display.c	/^display_med_capability(struct writer *w, long int available, int cap,$/;"	f	file:
+display_pids	display.c	/^display_pids(struct writer *w, lldpctl_atom_t *port)$/;"	f	file:
+display_port	display.c	/^display_port(struct writer *w, lldpctl_atom_t *port, int details)$/;"	f	file:
+display_ppvids	display.c	/^display_ppvids(struct writer *w, lldpctl_atom_t *port)$/;"	f	file:
+display_stat	display.c	/^display_stat(struct writer *w, const char *tag, const char *descr,$/;"	f
+display_vlans	display.c	/^display_vlans(struct writer *w, lldpctl_atom_t *port)$/;"	f	file:
+doc	commands.c	/^	const char *doc;	\/**< Documentation string *\/$/;"	m	struct:cmd_node	file:
+doc	commands.c	/^	const char *doc;$/;"	m	struct:candidate_word	file:
+doc	xml_writer.c	/^	xmlDocPtr doc;$/;"	m	struct:xml_writer_private	file:
+el	commands.c	/^	struct cmd_node *el;		 \/**< Stored element *\/$/;"	m	struct:cmd_env_stack	typeref:struct:cmd_env_stack::cmd_node	file:
+element	json_writer.c	/^struct element {$/;"	s	file:
+end	writer.h	/^	void	(*end)(struct writer *);$/;"	m	struct:writer
+env	show.c	/^	struct cmd_env *env;$/;"	m	struct:watcharg	typeref:struct:watcharg::cmd_env	file:
+execute	commands.c	/^	int(*execute)(struct lldpctl_conn_t*, struct writer*,$/;"	m	struct:cmd_node	file:
+fh	json_writer.c	/^	FILE *fh;$/;"	m	struct:json_writer_private	file:
+fh	kv_writer.c	/^	FILE *	fh;$/;"	m	struct:kv_writer_private	file:
+fh	text_writer.c	/^	FILE *	fh;$/;"	m	struct:txt_writer_private	file:
+fh	xml_writer.c	/^	FILE *fh;$/;"	m	struct:xml_writer_private	file:
+filter	lldpcli.c	/^filter(const struct dirent *dir)$/;"	f	file:
+finish	writer.h	/^	void	(*finish)(struct writer *);$/;"	m	struct:writer
+hidden	commands.c	/^	int hidden;		\/**< Hidden command? *\/$/;"	m	struct:cmd_node	file:
+hidden	commands.c	/^	int hidden;$/;"	m	struct:candidate_word	file:
+input	lldpcli.c	/^struct input {$/;"	s	file:
+input_append	lldpcli.c	/^input_append(const char *arg, struct inputs *inputs, int acceptdir, int warn)$/;"	f	file:
+is_lldpctl	lldpcli.c	/^is_lldpctl(const char *name)$/;"	f	file:
+is_privileged	lldpcli.c	/^is_privileged()$/;"	f	file:
+json_attr	json_writer.c	/^json_attr(struct writer *w, const char *tag,$/;"	f	file:
+json_cleanup	json_writer.c	/^json_cleanup(struct json_writer_private *p)$/;"	f	file:
+json_data	json_writer.c	/^json_data(struct writer *w, const char *data)$/;"	f	file:
+json_dump	json_writer.c	/^json_dump(struct json_writer_private *p)$/;"	f	file:
+json_element_cleanup	json_writer.c	/^json_element_cleanup(struct element *el)$/;"	f	file:
+json_element_dump	json_writer.c	/^json_element_dump(FILE *fh, struct element *current, int indent)$/;"	f	file:
+json_element_free	json_writer.c	/^json_element_free(struct element *current)$/;"	f	file:
+json_element_new	json_writer.c	/^json_element_new(struct element *parent, const char *key, enum tag tag)$/;"	f	file:
+json_end	json_writer.c	/^json_end(struct writer *w)$/;"	f	file:
+json_finish	json_writer.c	/^json_finish(struct writer *w)$/;"	f	file:
+json_free	json_writer.c	/^json_free(struct json_writer_private *p)$/;"	f	file:
+json_init	json_writer.c	/^json_init(FILE *fh, int variant)$/;"	f
+json_start	json_writer.c	/^json_start(struct writer *w, const char *tag,$/;"	f	file:
+json_string_dump	json_writer.c	/^json_string_dump(FILE *fh, const char *s)$/;"	f	file:
+json_writer_private	json_writer.c	/^struct json_writer_private {$/;"	s	file:
+key	commands.c	/^	const char *key;	      \/**< Key for this element *\/$/;"	m	struct:cmd_env_el	file:
+key	json_writer.c	/^	char *key;		   \/* Key if parent is an object *\/$/;"	m	struct:element	file:
+kv_attr	kv_writer.c	/^kv_attr(struct writer *w, const char *tag, const char *descr, const char *value)$/;"	f
+kv_data	kv_writer.c	/^kv_data(struct writer *w, const char *data)$/;"	f
+kv_end	kv_writer.c	/^kv_end(struct writer *w)$/;"	f
+kv_finish	kv_writer.c	/^kv_finish(struct writer *w)$/;"	f
+kv_init	kv_writer.c	/^kv_init(FILE *fh)$/;"	f
+kv_start	kv_writer.c	/^kv_start(struct writer *w , const char *tag, const char *descr)$/;"	f
+kv_writer_private	kv_writer.c	/^struct kv_writer_private {$/;"	s	file:
+level	text_writer.c	/^	int	level;$/;"	m	struct:txt_writer_private	file:
+main	lldpcli.c	/^main(int argc, char *argv[])$/;"	f
+must_exit	lldpcli.c	/^static int must_exit = 0;$/;"	v	file:
+name	lldpcli.c	/^	char *name;$/;"	m	struct:input	file:
+nb	show.c	/^	size_t nb;$/;"	m	struct:watcharg	file:
+parent	json_writer.c	/^	struct element *parent;	   \/* Parent (if any) *\/$/;"	m	struct:element	typeref:struct:element::element	file:
+parse_and_exec	lldpcli.c	/^parse_and_exec(lldpctl_conn_t *conn, const char *fmt, const char *line)$/;"	f	file:
+prefix	kv_writer.c	/^	char *  prefix;$/;"	m	struct:kv_writer_private	file:
+priv	writer.h	/^	void	* priv;$/;"	m	struct:writer
+privileged	commands.c	/^	int privileged;		\/**< Privileged command? *\/$/;"	m	struct:cmd_node	file:
+prompt	lldpcli.c	/^prompt()$/;"	f	file:
+readline	lldpcli.c	/^readline(const char *p)$/;"	f	file:
+register_commands	lldpcli.c	/^register_commands()$/;"	f	file:
+register_commands_configure	conf.c	/^register_commands_configure(struct cmd_node *root)$/;"	f
+register_commands_configure_dot3	conf-dot3.c	/^register_commands_configure_dot3(struct cmd_node *configure)$/;"	f
+register_commands_configure_lldp	conf-lldp.c	/^register_commands_configure_lldp(struct cmd_node *configure,$/;"	f
+register_commands_configure_lldp_custom_tlvs	conf-lldp.c	/^register_commands_configure_lldp_custom_tlvs(struct cmd_node *configure_lldp,$/;"	f
+register_commands_configure_med	conf-med.c	/^register_commands_configure_med(struct cmd_node *configure, struct cmd_node *unconfigure)$/;"	f
+register_commands_configure_system	conf-system.c	/^register_commands_configure_system(struct cmd_node *configure,$/;"	f
+register_commands_dot3pow	conf-power.c	/^register_commands_dot3pow(struct cmd_node *configure_dot3)$/;"	f
+register_commands_medfast	conf-med.c	/^register_commands_medfast(struct cmd_node *med, struct cmd_node *nomed)$/;"	f	file:
+register_commands_medloc	conf-med.c	/^register_commands_medloc(struct cmd_node *configure_med)$/;"	f	file:
+register_commands_medloc_addr	conf-med.c	/^register_commands_medloc_addr(struct cmd_node *configure_medlocation)$/;"	f	file:
+register_commands_medloc_coord	conf-med.c	/^register_commands_medloc_coord(struct cmd_node *configure_medlocation)$/;"	f	file:
+register_commands_medloc_elin	conf-med.c	/^register_commands_medloc_elin(struct cmd_node *configure_medlocation)$/;"	f	file:
+register_commands_medpol	conf-med.c	/^register_commands_medpol(struct cmd_node *configure_med)$/;"	f	file:
+register_commands_medpow	conf-power.c	/^register_commands_medpow(struct cmd_node *configure_med)$/;"	f
+register_commands_pow_priority	conf-power.c	/^register_commands_pow_priority(struct cmd_node *priority, int key)$/;"	f	file:
+register_commands_pow_source	conf-power.c	/^register_commands_pow_source(struct cmd_node *source)$/;"	f	file:
+register_commands_show	show.c	/^register_commands_show(struct cmd_node *root)$/;"	f
+register_commands_srcmac_type	conf-system.c	/^register_commands_srcmac_type(struct cmd_node *configure)$/;"	f	file:
+register_commands_watch	show.c	/^register_commands_watch(struct cmd_node *root)$/;"	f
+register_common_commands	show.c	/^register_common_commands(struct cmd_node *root, int neighbor)$/;"	f
+register_summary_command	show.c	/^register_summary_command(struct cmd_node *root)$/;"	f
+root	json_writer.c	/^	struct element *root;$/;"	m	struct:json_writer_private	typeref:struct:json_writer_private::element	file:
+root	lldpcli.c	/^static struct cmd_node *root = NULL;$/;"	v	typeref:struct:cmd_node	file:
+sep	text_writer.c	/^static char sep[] = "-------------------------------------------------------------------------------";$/;"	v	file:
+start	writer.h	/^	void	(*start)(struct writer *, const char * tag, const char * descr);$/;"	m	struct:writer
+string	json_writer.c	/^		char *string;	\/* STRING *\/$/;"	m	union:element::__anon1	file:
+tag	json_writer.c	/^	enum tag tag;		   \/* Kind of element *\/$/;"	m	struct:element	typeref:enum:element::tag	file:
+tag	json_writer.c	/^enum tag {$/;"	g	file:
+tag_attr	writer.h	33;"	d
+tag_data	writer.h	34;"	d
+tag_datatag	writer.h	36;"	d
+tag_end	writer.h	35;"	d
+tag_start	writer.h	32;"	d
+token	commands.c	/^	const char *token;	\/**< Token to enter this cnode *\/$/;"	m	struct:cmd_node	file:
+tokenize_free	tokenizer.c	/^tokenize_free(int argc, char **argv)$/;"	f
+tokenize_line	tokenizer.c	/^tokenize_line(const char *line, int *argc, char ***argv)$/;"	f
+totag	misc.c	/^totag(const char *value)$/;"	f
+txt_attr	text_writer.c	/^txt_attr(struct writer *w, const char *tag, const char *descr, const char *value) {$/;"	f	file:
+txt_data	text_writer.c	/^txt_data(struct writer *w, const char *data) {$/;"	f	file:
+txt_end	text_writer.c	/^txt_end(struct writer *w) {$/;"	f	file:
+txt_finish	text_writer.c	/^txt_finish(struct writer *w) {$/;"	f	file:
+txt_init	text_writer.c	/^txt_init(FILE* fh) {$/;"	f
+txt_start	text_writer.c	/^txt_start(struct writer *w , const char *tag, const char *descr) {$/;"	f	file:
+txt_writer_private	text_writer.c	/^struct txt_writer_private {$/;"	s	file:
+usage	lldpcli.c	/^usage()$/;"	f	file:
+utf8_validate_cz	utf8.c	/^utf8_validate_cz(const char *s)$/;"	f
+validate	commands.c	/^	int(*validate)(struct cmd_env*, void *);$/;"	m	struct:cmd_node	file:
+value	commands.c	/^	const char *value;	      \/**< Value for this element *\/$/;"	m	struct:cmd_env_el	file:
+variant	json_writer.c	/^	int variant;$/;"	m	struct:json_writer_private	file:
+w	show.c	/^	struct writer *w;$/;"	m	struct:watcharg	typeref:struct:watcharg::writer	file:
+watcharg	show.c	/^struct watcharg {$/;"	s	file:
+watchcb	show.c	/^watchcb(lldpctl_conn_t *conn,$/;"	f	file:
+word	commands.c	/^	const char *word;$/;"	m	struct:candidate_word	file:
+writer	writer.h	/^struct writer {$/;"	s
+xml_attr	xml_writer.c	/^void xml_attr(struct writer *w, const char *tag, const char *descr, const char *value ) {$/;"	f
+xml_data	xml_writer.c	/^void xml_data(struct writer *w, const char *data) {$/;"	f
+xml_end	xml_writer.c	/^void xml_end(struct writer *w) {$/;"	f
+xml_finish	xml_writer.c	/^void xml_finish(struct writer *w) {$/;"	f
+xml_init	xml_writer.c	/^struct writer *xml_init(FILE *fh) {$/;"	f
+xml_new_writer	xml_writer.c	/^void xml_new_writer(struct xml_writer_private *priv)$/;"	f
+xml_start	xml_writer.c	/^void xml_start(struct writer *w , const char *tag, const char *descr ) {$/;"	f
+xml_writer_private	xml_writer.c	/^struct xml_writer_private {$/;"	s	file:
+xw	xml_writer.c	/^	xmlTextWriterPtr xw;$/;"	m	struct:xml_writer_private	file:

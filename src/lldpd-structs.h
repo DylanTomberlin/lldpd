@@ -130,46 +130,66 @@ struct lldpd_dot3_power {
 	u_int16_t		requestedB;
 	u_int16_t		allocatedA;
 	u_int16_t		allocatedB;
-	/*Change in organization to more accurately reflect more complicated standard*/
-	union powerStatus {
-		struct {
-			u_int8_t	powerClassExt		: 4;
-			u_int8_t	powerClassB		: 3;
-			u_int8_t	powerClassA		: 3;
-			u_int8_t	psePowerPairs		: 2;
-			u_int8_t	pdPoweredStatus		: 2;
-			u_int8_t	psePoweringStatus	: 2;
-		} bits;
-		u_int16_t	octets;
+	/*Defining bitfield prevents need for bit shifting and more closely resembles standard*/
+	struct powerStatus {
+		u_int8_t	powerClassExt		: 4;
+		u_int8_t	powerClassB		: 3;
+		u_int8_t	powerClassA		: 3;
+		u_int8_t	psePowerPairs		: 2;
+		u_int8_t	pdPoweredStatus		: 2;
+		u_int8_t	psePoweringStatus	: 2;
 	};
-	union systemSetup {
-		struct {
-			u_int8_t	pdLoad		: 1;
-			u_int8_t 	powerTypeExt	: 3;
-			u_int8_t 	reserved	: 4;
-		} bits;
-		u_int8_t 	octets;
+	struct systemSetup {
+		u_int8_t	pdLoad		: 1;
+		u_int8_t 	powerTypeExt	: 3;
+		u_int8_t 	reserved	: 4;
 	};
 	u_int16_t		pseMaxAvailPower;
-	union autoclass {
-		struct {
-			u_int8_t	request			: 1;
-			u_int8_t	completed		: 1;
-			u_int8_t	pseAutoclassSupport 	: 1;
-			u_int8_t	reserved	: 5	: 1;
-		} bits;
-		u_int8_t	octets;
+	struct autoclass {
+		u_int8_t	request			: 1;
+		u_int8_t	completed		: 1;
+		u_int8_t	pseAutoclassSupport 	: 1;
+		u_int8_t	reserved		: 5;
 	};
-	union powerDown {
-		struct {
-			u_int32_t	time	: 18;
-			u_int16_t	request : 6;
-		} bits;
-		//TODO confirm this is truely making it only 3 octets long
+	struct powerDown {
+		u_int32_t	time	: 18;
+		u_int16_t	request : 6;
 		u_int32_t	octets : 24;
 	};
 };
 MARSHAL(lldpd_dot3_power);
+
+/*802.3bt*/
+struct lldpd_dot3_measurements {
+	u_int32_t energyMeas;
+	u_int16_t powerMeas;
+	u_int16_t currentMeas;
+	u_int16_t voltMeas;
+	u_int16_t energyUncertainty;
+	u_int16_t powerUncertainty;
+	u_int16_t currentUncertainty;
+	u_int16_t voltUncertainty;
+
+	struct flags {
+		u_int8_t energyValid	: 1;
+		u_int8_t powerValid	: 1;
+		u_int8_t currentValid	: 1;
+		u_int8_t voltValid	: 1;
+		u_int8_t energyRequest	: 1;
+		u_int8_t powerRequest	: 1;
+		u_int8_t currentRequest : 1;
+		u_int8_t voltageRequest : 1;
+
+		u_int8_t measSource	: 2;
+		u_int8_t reserved	: 2;
+		u_int8_t energySupport	: 1;
+		u_int8_t powerSupport	: 1;
+		u_int8_t currentSupport : 1;
+		u_int8_t voltSupport	: 1;
+	}
+	u_int16_t powerPriceIndex;
+};
+/* Do we need to MARSHAL(lldpd_dot3_measurements) */
 #endif
 
 #if defined (ENABLE_CDP) || defined (ENABLE_FDP)
@@ -304,9 +324,10 @@ struct lldpd_port {
 
 #ifdef ENABLE_DOT3
 	/* Dot3 stuff */
-	u_int32_t		 p_aggregid;
-	struct lldpd_dot3_macphy p_macphy;
-	struct lldpd_dot3_power	 p_power;
+	u_int32_t			p_aggregid;
+	struct lldpd_dot3_macphy	p_macphy;
+	struct lldpd_dot3_power		p_power;
+	struct lldpd_dot3_measurements	p_measurements; /*802.3bt specific*/
 #endif
 
 #ifdef ENABLE_LLDPMED
@@ -374,7 +395,9 @@ struct lldpd_port_set {
 	struct lldpd_med_power  *med_power;
 #endif
 #ifdef ENABLE_DOT3
-	struct lldpd_dot3_power *dot3_power;
+	struct lldpd_dot3_power		*dot3_power;
+	//TODO does it break the deserialize function?
+	struct lldpd_dot3_measurements	*dot3_measurements;
 #endif
 #ifdef ENABLE_CUSTOM
 	struct lldpd_custom     *custom;

@@ -319,9 +319,44 @@ static int _lldp_send(struct lldpd *global,
 			      POKE_UINT16(port->p_power.allocated)))
 				goto toobig;
 		}
+		if(port->p_power.systemSetup.powerTypeExt != LLDP_DOT3_POWER_TYPE_BTOFF) {
+			if(!(
+			     POKE_UINT16(port->p_power.requestedA) &&
+			     POKE_UINT16(port->p_power.requestedB) &&
+			     POKE_UINT16(port->p_power.allocatedA) &&
+			     POKE_UINT16(port->p_power.allocatedB) &&
+			     POKE_UINT16(port->p_power.powerStatus) &&
+			     POKE_UINT8(port->p_power.systemSetup) &&
+			     POKE_UINT16(port->p_power.pseMaxAvailPower) &&
+			     POKE_UINT8(port->p_power.autoclass) &&
+			/* power down is 3 octets long, not sure if this is an okay work around */
+			     POKE_UINT32(port->p_power.powerDown) &&
+			     POKE_DISCARD(1)))
+				goto toobig;
+		}
+		//build packet
 		if (!(POKE_END_LLDP_TLV))
 			goto toobig;
 	}
+	
+	/* Power Measurements (802.3bt) */
+	if (port->p_measurements.flags) { /* not sure what to be checking here? */
+		if(!(
+			POKE_START_LLDP_TLV(LLDP_TLV_ORG) &&
+			POKE_BYTES(dot3, sizeof(dot3)) &&
+			POKE_UINT32(port->p_measurements.energyMeas) &&
+			POKE_UINT16(port->p_measurements.powerMeas) &&
+			POKE_UINT16(port->p_measurements.currentMeas) &&
+			POKE_UINT16(port->p_measurements.voltMeas) &&
+			POKE_UINT16(port->p_measurements.energyUncertainty) &&
+			POKE_UINT16(port->p_measurements.powerUncertainty) &&
+			POKE_UINT16(port->p_measurements.currentUncertainty) &&
+			POKE_UINT16(port->p_measurements.voltUncertainty) &&
+			POKE_UINT16(port->p_measurements.flags) &&
+			POKE_UINT16(port->p_measurements.powerPriceIndex))
+				goto toobig;
+	}
+
 #endif
 
 #ifdef ENABLE_LLDPMED
@@ -920,10 +955,38 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						    LLDP_DOT3_POWER_8023AT_TYPE2;
 						port->p_power.requested = PEEK_UINT16;
 						port->p_power.allocated = PEEK_UINT16;
+					} 
+					/* 802.3bt? */
+					if (tlv_size >= 29) {
+						/* Is this logic covered by using unions? */
+						port->p_power.requestedA	= PEEK_UINT16;
+						port->p_power.requestedB 	= PEEK_UINT16;
+						port->p_power.allocatedA 	= PEEK_UINT16;
+						port->p_power.allocatedB 	= PEEK_UINT16;
+						port->p_power.powerStatus 	= PEEK_UINT16;
+						port->p_power.systemSetup	= PEEK_UINT8;	
+						port->p_power.pseMaxAvailPower	= PEEK_UINT16;
+						port->p_power.autoClass		= PEEK_UINT8;
+						/*Power down is 3 octets long, possible bug here */
+						port->p_power.powerDown		= PEEK_UINT32;
+						PEEK_DISCARD(1);
 					} else
 						port->p_power.powertype =
 						    LLDP_DOT3_POWER_8023AT_OFF;
 					break;
+				case LLDP_TLV_D0T3_MEASURE:
+					CHECK_TLV_SIZE(26, "Measurements");
+					/*could possibly PEEK whole power sturct using PEEK_BYTES */
+					port->p_measurements.energyMeas		= PEEK_UINT32;
+					port->p_measurements.powerMeas		= PEEK_UINT16;
+					port->p_measurements.currentMeas	= PEEK_UINT16;
+					port->p_measurements.voltMeas		= PEEK_UINT16;
+					port->p_measurements.energyUncertainty	= PEEK_UINT16;
+					port->p_measurements.powerUncertainty	= PEEK_UINT16;
+					port->p_measurements.currentUncertainty	= PEEK_UINT16;
+					port->p_measurements.voltUncertainty	= PEEK_UINT16;
+					port->p_measurements.flags		= PEEK_UINT16;
+					port->p_measurements.powerPriceIndex	= PEEK_UINT16;
 				default:
 					/* Unknown Dot3 TLV, ignore it */
 					hardware->h_rx_unrecognized_cnt++;
