@@ -319,7 +319,7 @@ static int _lldp_send(struct lldpd *global,
 			      POKE_UINT16(port->p_power.allocated)))
 				goto toobig;
 		}
-		if(port->p_power.systemSetup.powerTypeExt != LLDP_DOT3_POWER_TYPE_BTOFF) {
+		if(port->p_power.powerTypeExt != LLDP_DOT3_POWER_TYPE_BTOFF) {
 			if(!(
 			     POKE_UINT16(port->p_power.requestedA) &&
 			     POKE_UINT16(port->p_power.requestedB) &&

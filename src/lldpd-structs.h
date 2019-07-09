@@ -130,31 +130,45 @@ struct lldpd_dot3_power {
 	u_int16_t		requestedB;
 	u_int16_t		allocatedA;
 	u_int16_t		allocatedB;
+	/*Justification to be removed after PR:*/
 	/*Defining bitfield prevents need for bit shifting and more closely resembles standard*/
-	struct powerStatus {
-		u_int8_t	powerClassExt		: 4;
-		u_int8_t	powerClassB		: 3;
-		u_int8_t	powerClassA		: 3;
-		u_int8_t	psePowerPairs		: 2;
-		u_int8_t	pdPoweredStatus		: 2;
-		u_int8_t	psePoweringStatus	: 2;
-	};
-	struct systemSetup {
-		u_int8_t	pdLoad		: 1;
-		u_int8_t 	powerTypeExt	: 3;
-		u_int8_t 	reserved	: 4;
+	/*Anonymous structs and unions mean same lldpd_dot3_power.member notation
+	consistent with existing style*/
+	union {
+		u_int16_t	powerStatus;
+		struct {
+			u_int8_t	powerClassExt		: 4;
+			u_int8_t	powerClassB		: 3;
+			u_int8_t	powerClassA		: 3;
+			u_int8_t	psePowerPairs		: 2;
+			u_int8_t	pdPoweredStatus		: 2;
+			u_int8_t	psePoweringStatus	: 2;
+		};
+	} ;
+	union {
+		u_int8_t	systemSetup;
+		struct {
+			u_int8_t	pdLoad			: 1;
+			u_int8_t 	powerTypeExt		: 3;
+			u_int8_t 	reserved_systemSetup	: 4;
+		};
 	};
 	u_int16_t		pseMaxAvailPower;
-	struct autoclass {
-		u_int8_t	request			: 1;
-		u_int8_t	completed		: 1;
-		u_int8_t	pseAutoclassSupport 	: 1;
-		u_int8_t	reserved		: 5;
+	union {
+		u_int8_t	autoclass; 
+		struct{
+			u_int8_t	autoclass_request	: 1;
+			u_int8_t	autoclass_completed	: 1;
+			u_int8_t	pseAutoclassSupport 	: 1;
+			u_int8_t	autoclass_reserved: 5;
+		};
 	};
-	struct powerDown {
-		u_int32_t	time	: 18;
-		u_int16_t	request : 6;
-		u_int32_t	octets : 24;
+	union {
+		u_int64_t	powerDown; 
+		struct{
+			u_int32_t	powerdown_time: 18;
+			u_int16_t	powerdown_request_pd : 6;
+		};
 	};
 };
 MARSHAL(lldpd_dot3_power);
@@ -186,7 +200,7 @@ struct lldpd_dot3_measurements {
 		u_int8_t powerSupport	: 1;
 		u_int8_t currentSupport : 1;
 		u_int8_t voltSupport	: 1;
-	}
+	};
 	u_int16_t powerPriceIndex;
 };
 /* Do we need to MARSHAL(lldpd_dot3_measurements) */
