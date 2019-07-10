@@ -319,6 +319,7 @@ static int _lldp_send(struct lldpd *global,
 			      POKE_UINT16(port->p_power.allocated)))
 				goto toobig;
 		}
+		/* 802.3bt */
 		if(port->p_power.powerTypeExt != LLDP_DOT3_POWER_TYPE_BTOFF) {
 			if(!(
 			     POKE_UINT16(port->p_power.requestedA) &&
@@ -328,10 +329,15 @@ static int _lldp_send(struct lldpd *global,
 			     POKE_UINT16(port->p_power.powerStatus) &&
 			     POKE_UINT8(port->p_power.systemSetup) &&
 			     POKE_UINT16(port->p_power.pseMaxAvailPower) &&
-			     POKE_UINT8(port->p_power.autoclass) &&
-			/* power down is 3 octets long, not sure if this is an okay work around */
-			     POKE_UINT32(port->p_power.powerDown) &&
-			     POKE_DISCARD(1)))
+			     POKE_UINT8(port->p_power.autoClass) &&
+			/* power down is 3 octets long, might have issues with endianness */ 
+			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)))
+			/* Dealing with endianness:
+			# if __BYTE_ORDER == __BIG_ENDIAN
+			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)
+			# else
+			# if __BYTE_ORDER == __LITTLE_ENDIAN
+			*/
 				goto toobig;
 		}
 		//build packet
@@ -353,7 +359,7 @@ static int _lldp_send(struct lldpd *global,
 			POKE_UINT16(port->p_measurements.currentUncertainty) &&
 			POKE_UINT16(port->p_measurements.voltUncertainty) &&
 			POKE_UINT16(port->p_measurements.flags) &&
-			POKE_UINT16(port->p_measurements.powerPriceIndex))
+			POKE_UINT16(port->p_measurements.powerPriceIndex)))
 				goto toobig;
 	}
 
@@ -974,7 +980,7 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.powertype =
 						    LLDP_DOT3_POWER_8023AT_OFF;
 					break;
-				case LLDP_TLV_D0T3_MEASURE:
+				case LLDP_TLV_DOT3_MEASURE:
 					CHECK_TLV_SIZE(26, "Measurements");
 					/*could possibly PEEK whole power sturct using PEEK_BYTES */
 					port->p_measurements.energyMeas		= PEEK_UINT32;

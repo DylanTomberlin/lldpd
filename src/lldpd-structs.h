@@ -155,10 +155,10 @@ struct lldpd_dot3_power {
 	};
 	u_int16_t		pseMaxAvailPower;
 	union {
-		u_int8_t	autoclass; 
+		u_int8_t	autoClass; 
 		struct{
-			u_int8_t	autoclass_request	: 1;
-			u_int8_t	autoclass_completed	: 1;
+			u_int8_t	autoClass_request	: 1;
+			u_int8_t	autoClass_completed	: 1;
 			u_int8_t	pseAutoclassSupport 	: 1;
 			u_int8_t	autoclass_reserved: 5;
 		};
@@ -184,22 +184,25 @@ struct lldpd_dot3_measurements {
 	u_int16_t currentUncertainty;
 	u_int16_t voltUncertainty;
 
-	struct flags {
-		u_int8_t energyValid	: 1;
-		u_int8_t powerValid	: 1;
-		u_int8_t currentValid	: 1;
-		u_int8_t voltValid	: 1;
-		u_int8_t energyRequest	: 1;
-		u_int8_t powerRequest	: 1;
-		u_int8_t currentRequest : 1;
-		u_int8_t voltageRequest : 1;
+	union {
+		u_int16_t	flags;
+		struct {
+			u_int8_t energyValid	: 1;
+			u_int8_t powerValid	: 1;
+			u_int8_t currentValid	: 1;
+			u_int8_t voltValid	: 1;
+			u_int8_t energyRequest	: 1;
+			u_int8_t powerRequest	: 1;
+			u_int8_t currentRequest : 1;
+			u_int8_t voltageRequest : 1;
 
-		u_int8_t measSource	: 2;
-		u_int8_t reserved	: 2;
-		u_int8_t energySupport	: 1;
-		u_int8_t powerSupport	: 1;
-		u_int8_t currentSupport : 1;
-		u_int8_t voltSupport	: 1;
+			u_int8_t measSource	: 2;
+			u_int8_t reserved	: 2;
+			u_int8_t energySupport	: 1;
+			u_int8_t powerSupport	: 1;
+			u_int8_t currentSupport : 1;
+			u_int8_t voltSupport	: 1;
+		};
 	};
 	u_int16_t powerPriceIndex;
 };

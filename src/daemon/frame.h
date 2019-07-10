@@ -64,8 +64,6 @@ static union {
 	pos = (where);				\
 	} while(0)
 
-#define POKE_DISCARD(bytes) PEEK_DISCARD(bytes)
-
 /* This set of macro are used to parse packets. The same variable as for POKE_*
  * are used. There is no check on boundaries. */
 
