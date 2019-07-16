@@ -148,6 +148,11 @@
 #define LLDP_DOT3_POWER_SOURCE_LOCAL	2
 #define LLDP_DOT3_POWER_SOURCE_BOTH	3
 
+/* Dot3 PD 4PID (aka can PD be powered on both modes simultaneously?) */
+//TODO work this into the existing bit shift logic in lldp.c
+#define LLDP_DOT3_POWER_DUAL_MODE_SUP	1
+#define LLDP_DOT3_POWER_DUAL_MODE_UNSUP	0
+
 /* Dot3 power priority */
 #define LLDP_DOT3_POWER_PRIO_UNKNOWN	0
 #define LLDP_DOT3_POWER_PRIO_CRITICAL	1

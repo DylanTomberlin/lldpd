@@ -25,6 +25,9 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 
+//TEMP
+#include <stdio.h>
+
 static int
 lldpd_af_to_lldp_proto(int af)
 {
@@ -314,6 +317,8 @@ static int _lldp_send(struct lldpd *global,
 					   (((port->p_power.devicetype ==
 					      LLDP_DOT3_POWER_PSE)?0:1) << 6) |
 					   ((port->p_power.source   %(1<< 2))<<4) |
+					   (((port->p_power.dualMode ==
+					      LLDP_DOT3_POWER_DUAL_MODE_SUP)?1:0)<<2) |
 					   ((port->p_power.priority %(1<< 2))<<0))) &&
 			      POKE_UINT16(port->p_power.requested) &&
 			      POKE_UINT16(port->p_power.allocated)))
@@ -329,9 +334,9 @@ static int _lldp_send(struct lldpd *global,
 			     POKE_UINT16(port->p_power.powerStatus) &&
 			     POKE_UINT8(port->p_power.systemSetup) &&
 			     POKE_UINT16(port->p_power.pseMaxAvailPower) &&
-			     POKE_UINT8(port->p_power.autoClass) &&
+			     POKE_UINT8(port->p_power.autoClass)))// &&
 			/* power down is 3 octets long, might have issues with endianness */ 
-			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)))
+//			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)))
 			/* Dealing with endianness:
 			# if __BYTE_ORDER == __BIG_ENDIAN
 			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)
@@ -631,8 +636,7 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 	const char dcbx[] = LLDP_TLV_ORG_DCBX;
 	unsigned char orgid[3];
 	int length, gotend = 0, ttl_received = 0;
-	int tlv_size, tlv_type, tlv_subtype;
-	u_int8_t *pos, *tlv;
+	int tlv_size, tlv_type, tlv_subtype; u_int8_t *pos, *tlv;
 	char *b;
 #ifdef ENABLE_DOT1
 	struct lldpd_vlan *vlan = NULL;
@@ -699,10 +703,23 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 			    hardware->h_ifname);
 			goto malformed;
 		}
+		//TEMP:
+		printf("Printing tlv_size = %hi\n", tlv_size);
+		printf("Printing &tlv_size = %p\n", &tlv_size);
 		tlv_size = PEEK_UINT16;
+		//TEMP:
+		printf("Printing tlv_size = %hi\n", tlv_size);
+		printf("Printing &tlv_size = %p\n", &tlv_size);
 		tlv_type = tlv_size >> 9;
 		tlv_size = tlv_size & 0x1ff;
+		//TEMP:
+		printf("Printing tlv_size = %hi\n", tlv_size);
+		printf("Printing &tlv_size = %p\n", &tlv_size);
 		(void)PEEK_SAVE(tlv);
+		//TEMP:
+		tlv_size = 29;
+		printf("Printing tlv_size = %hi\n", tlv_size);
+		printf("Printing &tlv_size = %p\n", &tlv_size);
 		if (length < tlv_size) {
 			log_warnx("lldp", "frame too short for tlv received on %s",
 			    hardware->h_ifname);
@@ -953,6 +970,8 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.powertype = PEEK_UINT8;
 						port->p_power.source =
 						    (port->p_power.powertype & (1<<5 | 1<<4)) >> 4;
+						port->p_power.dualMode =
+							(port->p_power.powertype & (1 << 2) >> 2);
 						port->p_power.priority =
 						    (port->p_power.powertype & (1<<1 | 1<<0));
 						port->p_power.powertype =
@@ -962,7 +981,7 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.requested = PEEK_UINT16;
 						port->p_power.allocated = PEEK_UINT16;
 					} 
-					/* 802.3bt? */
+					/* 802.3bt */
 					if (tlv_size >= 29) {
 						/* Is this logic covered by using unions? */
 						port->p_power.requestedA	= PEEK_UINT16;
@@ -973,9 +992,8 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.systemSetup	= PEEK_UINT8;	
 						port->p_power.pseMaxAvailPower	= PEEK_UINT16;
 						port->p_power.autoClass		= PEEK_UINT8;
-						/*Power down is 3 octets long, possible bug here */
-						port->p_power.powerDown		= PEEK_UINT32;
-						PEEK_DISCARD(1);
+						/*Power down is 3 octets long, bug here! */
+						port->p_power.powerDown		= PEEK_UINT16;
 					} else
 						port->p_power.powertype =
 						    LLDP_DOT3_POWER_8023AT_OFF;
@@ -993,6 +1011,7 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 					port->p_measurements.voltUncertainty	= PEEK_UINT16;
 					port->p_measurements.flags		= PEEK_UINT16;
 					port->p_measurements.powerPriceIndex	= PEEK_UINT16;
+					break;
 				default:
 					/* Unknown Dot3 TLV, ignore it */
 					hardware->h_rx_unrecognized_cnt++;
