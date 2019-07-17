@@ -334,9 +334,13 @@ static int _lldp_send(struct lldpd *global,
 			     POKE_UINT16(port->p_power.powerStatus) &&
 			     POKE_UINT8(port->p_power.systemSetup) &&
 			     POKE_UINT16(port->p_power.pseMaxAvailPower) &&
-			     POKE_UINT8(port->p_power.autoClass)))// &&
+			     POKE_UINT8(port->p_power.autoClass) &&
 			/* power down is 3 octets long, might have issues with endianness */ 
-//			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)))
+			     //giving seg faults:
+			     //POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)))
+			     POKE_UINT8((port->p_power.powerDown>> 16) & 0xff) && 
+			     POKE_UINT8((port->p_power.powerDown>> 8) & 0xff) && 
+			     POKE_UINT8((port->p_power.powerDown>> 0) & 0xff))) 
 			/* Dealing with endianness:
 			# if __BYTE_ORDER == __BIG_ENDIAN
 			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)
@@ -355,6 +359,7 @@ static int _lldp_send(struct lldpd *global,
 		if(!(
 			POKE_START_LLDP_TLV(LLDP_TLV_ORG) &&
 			POKE_BYTES(dot3, sizeof(dot3)) &&
+			POKE_UINT8(LLDP_TLV_DOT3_MEASURE) &&
 			POKE_UINT32(port->p_measurements.energyMeas) &&
 			POKE_UINT16(port->p_measurements.powerMeas) &&
 			POKE_UINT16(port->p_measurements.currentMeas) &&
@@ -364,7 +369,8 @@ static int _lldp_send(struct lldpd *global,
 			POKE_UINT16(port->p_measurements.currentUncertainty) &&
 			POKE_UINT16(port->p_measurements.voltUncertainty) &&
 			POKE_UINT16(port->p_measurements.flags) &&
-			POKE_UINT16(port->p_measurements.powerPriceIndex)))
+			POKE_UINT16(port->p_measurements.powerPriceIndex) &&
+			POKE_END_LLDP_TLV))
 				goto toobig;
 	}
 
@@ -703,23 +709,10 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 			    hardware->h_ifname);
 			goto malformed;
 		}
-		//TEMP:
-		printf("Printing tlv_size = %hi\n", tlv_size);
-		printf("Printing &tlv_size = %p\n", &tlv_size);
 		tlv_size = PEEK_UINT16;
-		//TEMP:
-		printf("Printing tlv_size = %hi\n", tlv_size);
-		printf("Printing &tlv_size = %p\n", &tlv_size);
 		tlv_type = tlv_size >> 9;
 		tlv_size = tlv_size & 0x1ff;
-		//TEMP:
-		printf("Printing tlv_size = %hi\n", tlv_size);
-		printf("Printing &tlv_size = %p\n", &tlv_size);
 		(void)PEEK_SAVE(tlv);
-		//TEMP:
-		tlv_size = 29;
-		printf("Printing tlv_size = %hi\n", tlv_size);
-		printf("Printing &tlv_size = %p\n", &tlv_size);
 		if (length < tlv_size) {
 			log_warnx("lldp", "frame too short for tlv received on %s",
 			    hardware->h_ifname);
@@ -992,8 +985,10 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.systemSetup	= PEEK_UINT8;	
 						port->p_power.pseMaxAvailPower	= PEEK_UINT16;
 						port->p_power.autoClass		= PEEK_UINT8;
-						/*Power down is 3 octets long, bug here! */
-						port->p_power.powerDown		= PEEK_UINT16;
+						/*Power down is 3 octets long, possible endian bug here! */
+						port->p_power.powerDown		= PEEK_UINT8 << 16;
+						port->p_power.powerDown		|= (PEEK_UINT8 << 8);
+						port->p_power.powerDown		|= (PEEK_UINT8 << 0);
 					} else
 						port->p_power.powertype =
 						    LLDP_DOT3_POWER_8023AT_OFF;

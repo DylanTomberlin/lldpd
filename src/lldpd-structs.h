@@ -165,7 +165,7 @@ struct lldpd_dot3_power {
 		};
 	};
 	union {
-		u_int64_t	powerDown; 
+		u_int32_t	powerDown; 
 		struct{
 			u_int32_t	powerdown_time: 18;
 			u_int16_t	powerdown_request_pd : 6;
