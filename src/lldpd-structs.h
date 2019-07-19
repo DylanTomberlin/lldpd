@@ -208,6 +208,8 @@ struct lldpd_dot3_measurements {
 	u_int16_t powerPriceIndex;
 };
 /* Do we need to MARSHAL(lldpd_dot3_measurements) */
+MARSHAL(lldpd_dot3_measurements);
+
 #endif
 
 #if defined (ENABLE_CDP) || defined (ENABLE_FDP)
@@ -434,6 +436,7 @@ MARSHAL_POINTER(lldpd_port_set, lldpd_med_power,  med_power)
 #endif
 #ifdef ENABLE_DOT3
 MARSHAL_POINTER(lldpd_port_set, lldpd_dot3_power, dot3_power)
+MARSHAL_POINTER(lldpd_port_set, lldpd_dot3_measurements, dot3_measurements)
 #endif
 #ifdef ENABLE_CUSTOM
 MARSHAL_POINTER(lldpd_port_set, lldpd_custom,     custom)
