@@ -161,7 +161,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				log_warnx("lldpctl", "unable to set LLDP Dot3 power value for %s on %s. %s.",
 				    what, name, lldpctl_last_strerror(conn));
 				ok = 0;
-			}
+			} //TODO else if (cmdenv_ent(env, "typebt")){}... still need to set typebt up somewhere
 		}
 		if (ok) {
 			if (lldpctl_atom_set(port, lldpctl_k_port_dot3_power,
@@ -191,6 +191,14 @@ cmd_check_typeat_but_no(struct cmd_env *env, void *arg)
 {
 	const char *what = arg;
 	if (!cmdenv_get(env, "typeat")) return 0;
+	if (cmdenv_get(env, what)) return 0;
+	return 1;
+}
+static int
+cmd_check_dualmode_but_no(struct cmd_env *env, void *arg)
+{
+	const char *what = arg;
+	if (!cmdenv_get(env, "dualmode")) return 0;
 	if (cmdenv_get(env, what)) return 0;
 	return 1;
 }
@@ -394,7 +402,7 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 	/* 802.3at type */
 	struct cmd_node *typeat = commands_new(
 		configure_dot3power,
-		"type", "802.3at device type",
+		"typeAT", "802.3at device type",
 		cmd_check_type_but_no, NULL, "typeat");
 	commands_new(typeat,
 	    "1", "802.3at type 1",
@@ -409,6 +417,20 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		"source", "802.3at dot3 power source (mandatory)",
 		cmd_check_typeat_but_no, NULL, "source");
 	register_commands_pow_source(source);
+
+	/* 802.3bt PD 4PID (dual mode) */
+	struct cmd_node *dualMode = commands_new(
+		configure_dot3power,
+		"dualmode", "802.3bt pd supports 4 pair power",
+		cmd_check_typeat_but_no, NULL, "");
+	//TODO, do we need to register_commands_pow_dualMode(dualMode, lldpctl_k_dot3_power_dualMode);
+	commands_new(dualMode,
+		"supportPDorPSE", "802.3bt pd supports 4 pair power",
+		NULL, cmd_store_env_value_and_pop2, "dualmode)");
+	commands_new(dualMode,
+		"noSupportPD", "802.3bt pd supports 4 pair power",
+		NULL, cmd_store_env_value_and_pop2, "dualmode");
+
 
 	/* Priority */
 	struct cmd_node *priority = commands_new(
@@ -430,4 +452,44 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		    cmd_check_typeat_but_no, NULL, "allocated"),
 		NULL, "802.3at power value allocated in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "allocated");
+
+	/* 802.3bt type */
+	struct cmd_node *typebt = commands_new(
+		configure_dot3power,
+		"typeBT", "802.3bt type extension",
+		cmd_check_dualmode_but_no, NULL, "typebt");
+/* Do we want PSE options?
+	commands_new(typebt,
+	    "pse3", "802.3bt type 3 PSE",
+	    NULL, cmd_store_env_value_and_pop2, "typebt");
+	commands_new(typebt,
+	    "pse4", "802.3bt type 4 PSE",
+	    NULL, cmd_store_env_value_and_pop2, "typebt");
+*/
+	commands_new(typebt,
+	    "pd3single", "802.3bt type 3 single signature PD",
+	    NULL, cmd_store_env_value_and_pop2, "typebt");
+	commands_new(typebt,
+	    "pd3dual", "802.3bt type 3 dual signature PD",
+	    NULL, cmd_store_env_value_and_pop2, "typebt");
+	commands_new(typebt,
+	    "pd4single", "802.3bt type 4 single signature PD",
+	    NULL, cmd_store_env_value_and_pop2, "typebt");
+	commands_new(typebt,
+	    "pd4dual", "802.3bt type 4 dual signature PD",
+	    NULL, cmd_store_env_value_and_pop2, "typebt");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
