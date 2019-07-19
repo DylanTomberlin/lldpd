@@ -439,7 +439,7 @@ _client_handle_set_port(struct lldpd *cfg,
 		memcpy(&port->p_power, set->dot3_power,
 		    sizeof(struct lldpd_dot3_power));
 	}
-	if (set->dot3_power) {
+	if (set->dot3_measurements) {
 		log_debug("rpc", "requested change to Dot3 measurements");
 		memcpy(&port->p_measurements, set->dot3_measurements,
 		    sizeof(struct lldpd_dot3_measurements));
