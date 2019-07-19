@@ -66,6 +66,15 @@ static struct atom_map port_dot3_power_class_map = {
 	},
 };
 
+static struct atom_map port_dot3_power_dualMode_map = {
+	.key = lldpctl_k_dot3_power_dualMode,
+	.map = {
+		{ LLDP_DOT3_POWER_DUAL_MODE_SUP,	"simultaneous powering of both modes supported" },
+		{ LLDP_DOT3_POWER_DUAL_MODE_SUP,	"simultaneous powering of both modes not supported" },
+		{ 0, NULL },
+	},
+};
+
 static struct atom_map port_dot3_power_priority_map = {
 	.key = lldpctl_k_dot3_power_priority,
 	.map = {
@@ -77,6 +86,140 @@ static struct atom_map port_dot3_power_priority_map = {
 	},
 };
 
+static struct atom_map port_dot3_power_pseStatus_map = {
+	.key = lldpctl_k_dot3_power_pseStatus ,
+	.map = {
+		{ LLDP_DOT3_POWER_STATUS_PSE_2PAIR,			"2-pair powering" },
+		{ LLDP_DOT3_POWER_STATUS_PSE_4PAIR_SINGLE_SIGNATURE,	"4-pair powering single-signature PD" },
+		{ LLDP_DOT3_POWER_STATUS_PSE_4PAIR_DUAL_SIGNATURE,	"4-pair powering dual-signature PD" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_pdStatus_map = {
+	.key = lldpctl_k_dot3_power_pdStatus ,
+	.map = {
+		{ LLDP_DOT3_POWER_STATUS_PD_POWERED_SINGLE_SIGNATURE,	"Powered single-signature PD" },
+		{ LLDP_DOT3_POWER_STATUS_PD_2PAIR_DUAL_SIGNATURE,	"2-pair powered dual-signature PD" },
+		{ LLDP_DOT3_POWER_STATUS_PD_4PAIR_DUAL_SIGNATURE,	"4-pair powered dual-signature PD" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_pairsExt_map = {
+	.key = lldpctl_k_dot3_power_pairsExt ,
+	.map = {
+		{ LLDP_DOT3_POWERPAIRS_PSE_A,		"Alternative A (signal pairs)" },
+		{ LLDP_DOT3_POWERPAIRS_PSE_B,		"Alternative B (spare pairs)" },
+		{ LLDP_DOT3_POWERPAIRS_PSE_BOTH,	"Both Alternatives" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_dualSigAClass_map = {
+	.key = lldpctl_k_dot3_power_dualSigAClass ,
+	.map = {
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_1,		"Class 1" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_2,		"Class 2" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_3,		"Class 3" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_4,		"Class 4" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_5,		"Class 5" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_SINGLE_SIG_PD,	"Single-signature PD or 2-pair only PSE" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_dualSigBClass_map = {
+	.key = lldpctl_k_dot3_power_dualSigBClass ,
+	.map = {
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_1,		"Class 1" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_2,		"Class 2" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_3,		"Class 3" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_4,		"Class 4" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_5,		"Class 5" },
+		{ LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_SINGLE_SIG_PD,	"Single-signature PD or 2-pair only PSE" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_classExt_map = {
+	.key = lldpctl_k_dot3_power_classExt ,
+	.map = {
+		{ LLDP_DOT3_POWER_CLASS_1,		"Class 1" },
+		{ LLDP_DOT3_POWER_CLASS_2,		"Class 2" },
+		{ LLDP_DOT3_POWER_CLASS_3,		"Class 3" },
+		{ LLDP_DOT3_POWER_CLASS_4,		"Class 4" },
+		{ LLDP_DOT3_POWER_CLASS_5,		"Class 5" },
+		{ LLDP_DOT3_POWER_CLASS_6,		"Class 6" },
+		{ LLDP_DOT3_POWER_CLASS_7,		"Class 7" },
+		{ LLDP_DOT3_POWER_CLASS_8,		"Class 8" },
+		{ LLDP_DOT3_POWER_CLASS_DUAL_SIG_PD,	"Dual-signature PD" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_powerTypeExt_map = {
+	.key = lldpctl_k_dot3_power_powerTypeExt ,
+	.map = {
+		{ LLDP_DOT3_POWER_TYPE_3_PSE,		"Type 3 PSE" },
+		{ LLDP_DOT3_POWER_TYPE_4_PSE,		"Type 4 PSE" },
+		{ LLDP_DOT3_POWER_TYPE_3_PD_SINGLE_SIG,	"Type 3 single-signature PD" },
+		{ LLDP_DOT3_POWER_TYPE_3_PD_DUAL_SIG,	"Type 3 dual-signature PD" },
+		{ LLDP_DOT3_POWER_TYPE_4_PD_SINGLE_SIG,	"Type 4 single-signature PD" },
+		{ LLDP_DOT3_POWER_TYPE_4_PD_DUAL_SIG,	"Type 4 dual-signature PD" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_pdLoad_map = {
+	.key = lldpctl_k_dot3_power_pdLoad ,
+	.map = {
+		{ LLDP_DOT3_POWER_PD_LOAD_AB_ISOLATION_TRUE,
+			"PD is dual-signature and power demand on Mode A and Mode B are electrically isolated." },
+		{ LLDP_DOT3_POWER_PD_LOAD_AB_ISOLATION_FALSE,
+			"PD is single-signature or dual-signature and power demand on Mode A and Mode B are not electrically isolated." },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_autoclassSupport_map = {
+	.key = lldpctl_k_dot3_power_autoclassSupport ,
+	.map = {
+		{ LLDP_DOT3_POWER_AUTOCLASS_PSE_SUPPORT_TRUE,	"PSE supports Autoclass" },
+		{ LLDP_DOT3_POWER_AUTOCLASS_PSE_SUPPORT_FALSE,	"PSE does not support Autoclass" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_autoclassCompleted_map = {
+	.key = lldpctl_k_dot3_power_autoclassCompleted ,
+	.map = {
+		{ LLDP_DOT3_POWER_AUTOCLASS_COMPLETED_TRUE,	"Autoclass measurement completed" },
+		{ LLDP_DOT3_POWER_AUTOCLASS_COMPLETED_IDLE,	"Autoclass idle" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_autoclassRequest_map = {
+	.key = lldpctl_k_dot3_power_autoclassRequest ,
+	.map = {
+		{ LLDP_DOT3_POWER_AUTOCLASS_REQUEST_TRUE,	"PD requests Autoclass measurement" },
+		{ LLDP_DOT3_POWER_AUTOCLASS_REQUEST_IDLE,	"Autoclass idle" },
+		{ 0, NULL },
+	},
+};
+
+static struct atom_map port_dot3_power_powerDownRequest_map = {
+	.key = lldpctl_k_dot3_power_powerDownRequest ,
+	.map = {
+		{ LLDP_DOT3_POWER_POWERDOWN_REQUEST,	"PD requests a power down" },
+		{ 0, NULL },
+	},
+};
+
+//TODO, do I need to do this for all atom maps? Not all of originals got registered...
+//It seems like it's only ones which have the .key .map format which get registered, so
+//why do some need a key and others don't?
 ATOM_MAP_REGISTER(port_dot3_power_pairs_map,    4);
 ATOM_MAP_REGISTER(port_dot3_power_class_map,    5);
 ATOM_MAP_REGISTER(port_dot3_power_priority_map, 6);

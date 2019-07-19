@@ -707,9 +707,56 @@ typedef enum {
 	lldpctl_k_dot3_power_class, /**< `(IS,W)` Power class. */
 	lldpctl_k_dot3_power_type, /**< `(I,W)` 802.3AT power type */
 	lldpctl_k_dot3_power_source, /**< `(IS,W)` 802.3AT power source */
+	lldpctl_k_dot3_power_dualMode, /**< `(I,W)` 802.3BT PD 4PID, does PD support powering both modes simult.? */
 	lldpctl_k_dot3_power_priority, /**< `(IS,W)` 802.3AT power priority */
 	lldpctl_k_dot3_power_allocated, /**< `(I,W)` 802.3AT power allocated */
 	lldpctl_k_dot3_power_requested, /**< `(I,W)` 802.3AT power requested */
+
+	/*802.3bt additions*/
+	lldpctl_k_dot3_power_requestedA, /**< `(I, W)` 802.3BT power requested for Mode A */
+	lldpctl_k_dot3_power_requestedB, /**< `(I, W)` 802.3BT power requested for Mode B */
+	lldpctl_k_dot3_power_allocatedA, /**< `(I, W)` 802.3BT power allocated for Mode A */
+	lldpctl_k_dot3_power_allocatedB, /**< `(I, W)` 802.3BT power allocated for Mode B */
+//TODO finish qualifying with (I, W, etc) params
+	lldpctl_k_dot3_power_pseStatus, /**< `()` 802.3BT PSE powering status*/
+	lldpctl_k_dot3_power_pdStatus, /**< `()` 802.3BT  PD powered status*/
+	lldpctl_k_dot3_power_pairsExt, /**< `()` 802.3BT PSE power pairs ext */
+	lldpctl_k_dot3_power_dualSigAClass, /**< `()` 802.3BT Dual-signature power class ext Mode A */
+	lldpctl_k_dot3_power_dualSigBClass, /**< `()` 802.3BT Dual-signature power class ext Mode B */
+	lldpctl_k_dot3_power_classExt, /**< `()` 802.3BT Power class ext */
+	lldpctl_k_dot3_power_powerTypeExt, /**< `()` 802.3BT power type ext */
+	lldpctl_k_dot3_power_pdLoad, /**< `()` 802.3BT is PD dual signature && electrically isolated? */
+	lldpctl_k_dot3_power_pseMaxPower, /**< `()` 802.3BT PSE maximum available power */
+	lldpctl_k_dot3_power_autoclassSupport, /**< `()` 802.3BT, does PSE support Autoclass? */
+	lldpctl_k_dot3_power_autoclassCompleted, /**< `()` 802.3BT, autoclass meausurement complete? */
+	lldpctl_k_dot3_power_autoclassRequest, /**< `()` 802.3BT, PD requested autoclass? */
+	lldpctl_k_dot3_power_powerDownRequest, /**< `()` 802.3BT, if == 0x1D, power down requested */
+	lldpctl_k_dot3_power_powerDownTime, /**< `()` 802.3BT time in seconds PD requests to be unpowered */
+
+//TODO comments for this block
+	/*802.3bt Measurement tlv*/
+	lldpctl_k_port_dot3_measurement = 1450, /**< `()` */
+	lldpctl_k_dot3_measurement_voltSupport, /**< `()` */
+	lldpctl_k_dot3_measurement_currentSupport, /**< `()` */
+	lldpctl_k_dot3_measurement_powerSupport, /**< `()` */
+	lldpctl_k_dot3_measurement_energySupport, /**< `()` */
+	lldpctl_k_dot3_measurement_measurementSource, /**< `()` */
+	lldpctl_k_dot3_measurement_voltRequest, /**< `()` */
+	lldpctl_k_dot3_measurement_currentRequest, /**< `()` */
+	lldpctl_k_dot3_measurement_powerRequest, /**< `()` */
+	lldpctl_k_dot3_measurement_energyRequest, /**< `()` */
+	lldpctl_k_dot3_measurement_voltValid, /**< `()` */
+	lldpctl_k_dot3_measurement_currentValid, /**< `()` */
+	lldpctl_k_dot3_measurement_powerValid, /**< `()` */
+	lldpctl_k_dot3_measurement_energyValid, /**< `()` */
+	lldpctl_k_dot3_measurement_voltUncertainty, /**< `()` */
+	lldpctl_k_dot3_measurement_currentUncertainty, /**< `()` */
+	lldpctl_k_dot3_measurement_powerUncertainty, /**< `()` */
+	lldpctl_k_dot3_measurement_energyUncertainty, /**< `()` */
+	lldpctl_k_dot3_measurement_voltMeasurement, /**< `()` */
+	lldpctl_k_dot3_measurement_currentMeasurement, /**< `()` */
+	lldpctl_k_dot3_measurement_powerMeasurement, /**< `()` */
+	lldpctl_k_dot3_measurement_energyMeasurement, /**< `()` */
 
 	lldpctl_k_port_vlan_pvid = 1500, /**< `(I)` Primary VLAN ID */
 	lldpctl_k_port_vlans, /**< `(AL)` List of VLAN */
