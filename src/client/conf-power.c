@@ -87,6 +87,8 @@ cmd_store_prio_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,
 	return cmd_store_something_env_value_and_pop2("priority", env, value);
 }
 
+/*This function takes values stored in the command line environment and
+sets the atom values accordingly*/
 static int
 cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
     struct cmd_env *env, void *arg)
@@ -105,7 +107,8 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 			continue; /* Need to finish the loop */
 		}
 
-		if ((what = "device type", lldpctl_atom_set_str(dot3_power,
+		if (
+		    (what = "device type", lldpctl_atom_set_str(dot3_power,
 			    lldpctl_k_dot3_power_devicetype,
 			    cmdenv_get(env, "device-type"))) == NULL ||
 		    /* Flags */
@@ -130,7 +133,8 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 			lldpctl_atom_set_int(dot3_power,
 			    lldpctl_k_dot3_power_class, 0)) == NULL ||
 		    (what = "802.3at type", lldpctl_atom_set_int(dot3_power,
-			lldpctl_k_dot3_power_type, 0)) == NULL) {
+			lldpctl_k_dot3_power_type, 0)) == NULL
+		) {
 			log_warnx("lldpctl",
 			    "unable to set LLDP Dot3 power value for %s on %s. %s.",
 			    what, name, lldpctl_last_strerror(conn));
@@ -138,7 +142,9 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 		} else if (cmdenv_get(env, "typeat")) {
 			int typeat = cmdenv_get(env, "typeat")[0] - '0';
 			const char *source = cmdenv_get(env, "source");
-			if ((what = "802.3at type", lldpctl_atom_set_int(dot3_power,
+			const char *dualmode = cmdenv_get(env, "dualmode");
+			if (
+			    (what = "802.3at type", lldpctl_atom_set_int(dot3_power,
 				    lldpctl_k_dot3_power_type,
 				    typeat)) == NULL ||
 			    (what = "source", lldpctl_atom_set_int(dot3_power,
@@ -149,6 +155,10 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				(!strcmp(source, "local"))?  LLDP_DOT3_POWER_SOURCE_LOCAL:
 				(!strcmp(source, "both"))?   LLDP_DOT3_POWER_SOURCE_BOTH:
 				LLDP_DOT3_POWER_SOURCE_UNKNOWN)) == NULL ||
+			    (what = "dual mode", lldpctl_atom_set_int(dot3_power,
+				lldpctl_k_dot3_power_dualMode,
+				(!strcmp(dualmode, "supportPDorPSE"))?LLDP_DOT3_POWER_DUAL_MODE_SUP:
+				LLDP_DOT3_POWER_DUAL_MODE_UNSUP)) == NULL ||
 			    (what = "priority", lldpctl_atom_set_str(dot3_power,
 				lldpctl_k_dot3_power_priority,
 				cmdenv_get(env, "priority"))) == NULL ||
@@ -157,12 +167,35 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				cmdenv_get(env, "requested"))) == NULL ||
 			    (what = "allocated power", lldpctl_atom_set_str(dot3_power,
 				lldpctl_k_dot3_power_allocated,
-				cmdenv_get(env, "allocated"))) == NULL) {
+				cmdenv_get(env, "allocated"))) == NULL 
+			) {
 				log_warnx("lldpctl", "unable to set LLDP Dot3 power value for %s on %s. %s.",
 				    what, name, lldpctl_last_strerror(conn));
 				ok = 0;
-			} //TODO else if (cmdenv_ent(env, "typebt")){}... still need to set typebt up somewhere
+			} else if (cmdenv_get(env, "dualmode")) {
+				//add cmdenv_get calls
+				if(
+				    (what = "requested power A", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_requestedA,
+					cmdenv_get(env, "requestedA"))) == NULL ||
+				    (what = "requested power B", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_requestedB,
+					cmdenv_get(env, "requestedB"))) == NULL ||
+				    (what = "allocated power A", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_allocatedA,
+					cmdenv_get(env, "allocatedA"))) == NULL ||
+				    (what = "allocated power B", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_allocatedB,
+					cmdenv_get(env, "allocatedB"))) == NULL 
+				) {
+					//log_warnx
+					log_warnx("lldpctl", "unable to set LLDP Dot3 power value for %s on %s. %s.",
+					    what, name, lldpctl_last_strerror(conn));
+					ok = 0;
+				}
+			}
 		}
+
 		if (ok) {
 			if (lldpctl_atom_set(port, lldpctl_k_port_dot3_power,
 				dot3_power) == NULL) {
@@ -174,7 +207,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 		}
 
 		lldpctl_atom_dec_ref(dot3_power);
-	}
+	}//end while
 	return 1;
 }
 
@@ -193,6 +226,12 @@ cmd_check_typeat_but_no(struct cmd_env *env, void *arg)
 	if (!cmdenv_get(env, "typeat")) return 0;
 	if (cmdenv_get(env, what)) return 0;
 	return 1;
+}
+/*check that PD 4PID field is set, (called dualmode) indicating 802.3bt extension*/
+static int
+cmd_check_dualmode(struct cmd_env *env, void *arg)
+{
+	return !!cmdenv_get(env, "dualmode");
 }
 static int
 cmd_check_dualmode_but_no(struct cmd_env *env, void *arg)
@@ -326,7 +365,7 @@ cmd_check_env_power(struct cmd_env *env, void *nothing)
 }
 
 /**
- * Register `configure med dot3` commands.
+ * Register `configure dot3 power` commands.
  */
 void
 register_commands_dot3pow(struct cmd_node *configure_dot3)
@@ -402,7 +441,7 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 	/* 802.3at type */
 	struct cmd_node *typeat = commands_new(
 		configure_dot3power,
-		"typeAT", "802.3at device type",
+		"typeat", "802.3at device type",
 		cmd_check_type_but_no, NULL, "typeat");
 	commands_new(typeat,
 	    "1", "802.3at type 1",
@@ -418,20 +457,23 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		cmd_check_typeat_but_no, NULL, "source");
 	register_commands_pow_source(source);
 
+	/*TODO, currently, this option must be set to be able to fill out any
+	other bt fields.  Check this is truely what the standard is saying*/
+	//TODO, make this so only need to set dualmode without saying supported,
+	//i.e. defaults to not supported unless is?
 	/* 802.3bt PD 4PID (dual mode) */
-	struct cmd_node *dualMode = commands_new(
+	struct cmd_node *dualmode = commands_new(
 		configure_dot3power,
 		"dualmode", "802.3bt pd supports 4 pair power",
-		cmd_check_typeat_but_no, NULL, "");
-	//TODO, do we need to register_commands_pow_dualMode(dualMode, lldpctl_k_dot3_power_dualMode);
-	commands_new(dualMode,
+		cmd_check_typeat_but_no, NULL, "dualmode");
+		//cmd_check_bt, NULL, "dualmode");
+	commands_new(
+		dualmode,
 		"supportPDorPSE", "802.3bt pd supports 4 pair power",
-		NULL, cmd_store_env_value_and_pop2, "dualmode)");
-	commands_new(dualMode,
-		"noSupportPD", "802.3bt pd supports 4 pair power",
 		NULL, cmd_store_env_value_and_pop2, "dualmode");
-
-
+	commands_new(dualmode,
+		"noSupportPD", "802.3bt pd does not support 4 pair power",
+		NULL, cmd_store_env_value_and_pop2, "dualmode");
 	/* Priority */
 	struct cmd_node *priority = commands_new(
 		configure_dot3power,
@@ -440,32 +482,163 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 	register_commands_pow_priority(priority, lldpctl_k_dot3_power_priority);
 
 	/* Values */
+	/*Requested*/
 	commands_new(
 		commands_new(configure_dot3power,
 		    "requested", "802.3at dot3 power value requested (mandatory)",
 		    cmd_check_typeat_but_no, NULL, "requested"),
 		NULL, "802.3at power value requested in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "requested");
+	/*Allocated*/
 	commands_new(
 		commands_new(configure_dot3power,
 		    "allocated", "802.3at dot3 power value allocated (mandatory)",
 		    cmd_check_typeat_but_no, NULL, "allocated"),
 		NULL, "802.3at power value allocated in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "allocated");
+	/*Requested A (802.3bt)*/
+	commands_new(
+		commands_new(configure_dot3power,
+		    "requestedA", "802.3bt dot3 power value requested on pair A (mandatory)",
+		    cmd_check_dualmode, NULL, "requestedA"),
+		NULL, "802.3bt power value requested on pair A in milliwatts",
+		NULL, cmd_store_env_value_and_pop2, "requestedA");
+	/*Requested B (802.3bt)*/
+	commands_new(
+		commands_new(configure_dot3power,
+		    "requestedB", "802.3bt dot3 power value requested on pair B (mandatory)",
+		    cmd_check_dualmode, NULL, "requestedB"),
+		NULL, "802.3bt power value requested on pair B in milliwatts",
+		NULL, cmd_store_env_value_and_pop2, "requestedB");
+	/*Allocated A (802.3bt)*/
+	commands_new(
+		commands_new(configure_dot3power,
+		    "allocatedA", "802.3bt dot3 power value allocated on pair A (mandatory)",
+		    cmd_check_dualmode, NULL, "allocatedA"),
+		NULL, "802.3bt power value allocated on pair A in milliwatts",
+		NULL, cmd_store_env_value_and_pop2, "allocatedA");
+	/*Allocated B (802.3bt)*/
+	commands_new(
+		commands_new(configure_dot3power,
+		    "allocatedB", "802.3bt dot3 power value allocated on pair B (mandatory)",
+		    cmd_check_dualmode, NULL, "allocatedB"),
+		NULL, "802.3bt power value allocated on pair B in milliwatts",
+		NULL, cmd_store_env_value_and_pop2, "allocatedB");
+
+	//TODO, do I need to make it so when this command (and others) has already been
+	//traversed in the help menu, it doesn't show up again?
+	/* PSE powering status (802.3bt) */
+	struct cmd_node *pseStatus = commands_new(
+		configure_dot3power,
+		"pseStatus", "what signature and pairs of PD is pse powering?",
+		cmd_check_dualmode, NULL, "pseStatus");
+	commands_new(pseStatus,
+		"dual4Pair", "4-pair powering dual-signature PD",
+		NULL, cmd_store_env_value_and_pop2, "pseStatus");
+	commands_new(pseStatus,
+		"single4Pair", "4-pair powering single-signature PD",
+		NULL, cmd_store_env_value_and_pop2, "pseStatus");
+	commands_new(pseStatus,
+		"2Pair", "2-pair powering",
+		NULL, cmd_store_env_value_and_pop2, "pseStatus");
+
+	/*PD powered status (802.3bt)*/
+	struct cmd_node *pdStatus = commands_new(
+		configure_dot3power,
+		"pdStatus", "what signature and pairs of PD?",
+		cmd_check_dualmode, NULL, "pdStatus");
+	commands_new(pdStatus,
+		"dual4Pair", "PD is being powered by 4-pairs, dual signature",
+		NULL, cmd_store_env_value_and_pop2, "pdStatus");
+	commands_new(pdStatus,
+		"dual2Pair", "PD is being powered by 2-pairs, dual signature",
+		NULL, cmd_store_env_value_and_pop2, "pdStatus");
+	commands_new(pdStatus,
+		"single", "single signature PD",
+		NULL, cmd_store_env_value_and_pop2, "pdStatus");
+	
+	/*PSE power pairs ext*/
+	struct cmd_node *pairsExt = commands_new(
+		configure_dot3power,
+		"pairsExt", "Which pairs are powered?",
+		cmd_check_dualmode, NULL, "pairsExt");
+	commands_new(pairsExt,
+		"both", "Both alternatives powered",
+		NULL, cmd_store_env_value_and_pop2, "pairsExt");
+	commands_new(pairsExt,
+		"signal", "Alternative A powered",
+		NULL, cmd_store_env_value_and_pop2, "pairsExt");
+	commands_new(pairsExt,
+		"spare", "Alternative B powered",
+		NULL, cmd_store_env_value_and_pop2, "pairsExt");
+
+	/*Pair A class ext*/
+	struct cmd_node *aClass = commands_new(
+		configure_dot3power,
+		"aClass", "Power class of power on signal pair (alt B)",
+		cmd_check_dualmode, NULL, "aClass");
+	for (lldpctl_map_t *aClass_map =
+		 lldpctl_key_get_map(lldpctl_k_dot3_power_dualSigAClass);
+	     aClass_map->string;
+	     aClass_map++) {
+		const char *tag = strdup(totag(aClass_map->string));
+		SUPPRESS_LEAK(tag);
+		commands_new(
+			aClass,
+			tag,
+			aClass_map->string,
+			NULL, cmd_store_class_env_value_and_pop2, aClass_map->string);
+	}
+
+	/*Pair B class ext*/
+	struct cmd_node *bClass = commands_new(
+		configure_dot3power,
+		"bClass", "Power class of power on spare pair (alt B)",
+		cmd_check_dualmode, NULL, "bClass");
+	for (lldpctl_map_t *bClass_map =
+		 lldpctl_key_get_map(lldpctl_k_dot3_power_dualSigBClass);
+	     bClass_map->string;
+	     bClass_map++) {
+		const char *tag = strdup(totag(bClass_map->string));
+		SUPPRESS_LEAK(tag);
+		commands_new(
+			bClass,
+			tag,
+			bClass_map->string,
+			NULL, cmd_store_class_env_value_and_pop2, bClass_map->string);
+	}
+
+	/*802.3bt class extension*/
+	struct cmd_node *classExt = commands_new(
+		configure_dot3power,
+		"classExt", "802.3bt Power class extension",
+		cmd_check_dualmode, NULL, "classExt");
+	for (lldpctl_map_t *classExt_map =
+		 lldpctl_key_get_map(lldpctl_k_dot3_power_classExt);
+	     classExt_map->string;
+	     classExt_map++) {
+		const char *tag = strdup(totag(classExt_map->string));
+		SUPPRESS_LEAK(tag);
+		commands_new(
+			classExt,
+			tag,
+			classExt_map->string,
+			NULL, cmd_store_class_env_value_and_pop2, classExt_map->string);
+	}
 
 	/* 802.3bt type */
 	struct cmd_node *typebt = commands_new(
 		configure_dot3power,
-		"typeBT", "802.3bt type extension",
+		"typebt", "802.3bt type extension",
 		cmd_check_dualmode_but_no, NULL, "typebt");
-/* Do we want PSE options?
+	/* TODO, Do we want PSE options?
 	commands_new(typebt,
 	    "pse3", "802.3bt type 3 PSE",
 	    NULL, cmd_store_env_value_and_pop2, "typebt");
 	commands_new(typebt,
 	    "pse4", "802.3bt type 4 PSE",
 	    NULL, cmd_store_env_value_and_pop2, "typebt");
-*/
+	*/
 	commands_new(typebt,
 	    "pd3single", "802.3bt type 3 single signature PD",
 	    NULL, cmd_store_env_value_and_pop2, "typebt");
@@ -479,17 +652,71 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 	    "pd4dual", "802.3bt type 4 dual signature PD",
 	    NULL, cmd_store_env_value_and_pop2, "typebt");
 
+	/*power type ext*/
+	//TODO is this a repeat of typebt?
+	/*
+	struct cmd_node *powerExt = commands_new(
+		configure_dot3power,
+		"powerExt", "Power class",
+		cmd_check_dualmode, NULL, "powerExt");
+	for (lldpctl_map_t *powerExt_map =
+		 lldpctl_key_get_map(lldpctl_k_dot3_power_powerTypeExt);
+	     powerExt_map->string;
+	     powerExt_map++) {
+		const char *tag = strdup(totag(powerExt_map->string));
+		SUPPRESS_LEAK(tag);
+		commands_new(
+			powerExt,
+			tag,
+			powerExt_map->string,
+			NULL, cmd_store_class_env_value_and_pop2, powerExt_map->string);
+	}
+	*/
+	
+	/*PD load*/
+	struct cmd_node *pdLoad = commands_new(
+		configure_dot3power,
+		"pdLoad", "4 pair isolation",
+		cmd_check_dualmode, NULL, "pdLoad");
+	commands_new(pdLoad,
+		"isolated", "PD is dual-signature and power demand on Mode A and Mode B are electrically isolated.",
+		NULL, cmd_store_class_env_value_and_pop2, "pdLoad");
+	commands_new(pdLoad,
+		"not-isolated", "PD is single-signature or power demand on Mode A and Mode B are not electrically isolated.",
+		NULL, cmd_store_class_env_value_and_pop2, "pdLoad");
 
+	/*PSE max avail power*/
+	commands_new(
+		commands_new(configure_dot3power,
+		    "pseMaxPower", "Maximum power a PSE can grant",
+		    cmd_check_dualmode, NULL, "pseMaxPower"),
+		NULL, "Maximum power a PSE can grant in milliwatts",
+		NULL, cmd_store_env_value_and_pop2, "pseMaxPower");
 
+	/*Autoclass Flags*/
+	commands_new(
+		configure_dot3power,
+		"autoclassSupport", "PSE supports Autoclass",
+		cmd_check_dualmode, cmd_store_env_and_pop, "autoclassSupport");
+	commands_new(
+		configure_dot3power,
+		"autoclassComplete", "Autoclass measurement complete if true, idle if false",
+		cmd_check_dualmode, cmd_store_env_and_pop, "autoclassComplete");
+	commands_new(
+		configure_dot3power,
+		"autoclassRequest", "PD requests autoclass measurement if true, idle if false",
+		cmd_check_dualmode, cmd_store_env_and_pop, "autoclassRequest");
 
-
-
-
-
-
-
-
-
-
-
+	/*Power down*/
+	commands_new(
+		configure_dot3power,
+		"powerDownRequest", "PD requests powerdown",
+		cmd_check_dualmode, cmd_store_env_and_pop, "powerDownRequest");
+	commands_new(
+		commands_new(configure_dot3power,
+		    "powerDownTime", "Time in seconds PD requests power down for",
+		    cmd_check_dualmode, NULL, "powerDownTime"),
+		NULL, "Time in seconds PD requests power down for",
+		NULL, cmd_store_env_value_and_pop2, "powerDownTime");
 }
+
