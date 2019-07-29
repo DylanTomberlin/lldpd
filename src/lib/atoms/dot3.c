@@ -70,7 +70,7 @@ static struct atom_map port_dot3_power_dualMode_map = {
 	.key = lldpctl_k_dot3_power_dualMode,
 	.map = {
 		{ LLDP_DOT3_POWER_DUAL_MODE_SUP,	"simultaneous powering of both modes supported" },
-		{ LLDP_DOT3_POWER_DUAL_MODE_SUP,	"simultaneous powering of both modes not supported" },
+		{ LLDP_DOT3_POWER_DUAL_MODE_UNSUP,	"simultaneous powering of both modes not supported" },
 		{ 0, NULL },
 	},
 };
@@ -217,12 +217,16 @@ static struct atom_map port_dot3_power_powerDownRequest_map = {
 	},
 };
 
-//TODO, do I need to do this for all atom maps? Not all of originals got registered...
-//It seems like it's only ones which have the .key .map format which get registered, so
-//why do some need a key and others don't?
+/*Registering maps allows them to be used in conf-power.c in the register commands functions*/
+//TODO, does priority matter?
 ATOM_MAP_REGISTER(port_dot3_power_pairs_map,    4);
 ATOM_MAP_REGISTER(port_dot3_power_class_map,    5);
 ATOM_MAP_REGISTER(port_dot3_power_priority_map, 6);
+ATOM_MAP_REGISTER(port_dot3_power_dualSigAClass_map, 7);
+ATOM_MAP_REGISTER(port_dot3_power_dualSigBClass_map, 8);
+ATOM_MAP_REGISTER(port_dot3_power_classExt_map, 9);
+ATOM_MAP_REGISTER(port_dot3_power_powerTypeExt_map, 10);
+ATOM_MAP_REGISTER(port_dot3_power_pdLoad_map, 11);
 
 static int
 _lldpctl_atom_new_dot3_power(lldpctl_atom_t *atom, va_list ap)
@@ -274,6 +278,7 @@ _lldpctl_atom_get_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 	}
 }
 
+//TODO, add bt support
 static long int
 _lldpctl_atom_get_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 {
@@ -385,6 +390,14 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 			goto bad;
 		port->p_power.source = value;
 		return atom;
+	case lldpctl_k_dot3_power_dualMode:
+		switch(value) {
+		case 1:
+		case 2:
+			port->p_power.dualMode = value;
+			return atom;
+		default: goto bad;
+		}
 	case lldpctl_k_dot3_power_priority:
 		switch (value) {
 		case LLDP_DOT3_POWER_PRIO_UNKNOWN:
@@ -396,12 +409,150 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 		default: goto bad;
 		}
 	case lldpctl_k_dot3_power_allocated:
-		if (value < 0) goto bad;
+		if (value < 0 || value > 99900) goto bad;
 		port->p_power.allocated = value / 100;
 		return atom;
 	case lldpctl_k_dot3_power_requested:
-		if (value < 0) goto bad;
+		if (value < 0 || value > 99900) goto bad;
 		port->p_power.requested = value / 100;
+		return atom;
+	case lldpctl_k_dot3_power_requestedA:
+		if (value < 0 || value > 49900) goto bad;
+		port->p_power.requestedA = value / 100;
+		return atom;
+	case lldpctl_k_dot3_power_requestedB:
+		if (value < 0 || value > 49900) goto bad;
+		port->p_power.requestedB = value / 100;
+		return atom;
+	case lldpctl_k_dot3_power_allocatedA:
+		if (value < 0 || value > 49900) goto bad;
+		port->p_power.allocatedA = value / 100;
+		return atom;
+	case lldpctl_k_dot3_power_allocatedB:
+		if (value < 0 || value > 49900) goto bad;
+		port->p_power.allocatedB = value / 100;
+		return atom;
+	case lldpctl_k_dot3_power_pseStatus:
+		switch (value) {
+		case LLDP_DOT3_POWER_STATUS_PSE_2PAIR:
+		case LLDP_DOT3_POWER_STATUS_PSE_4PAIR_SINGLE_SIGNATURE:
+		case LLDP_DOT3_POWER_STATUS_PSE_4PAIR_DUAL_SIGNATURE:
+			port->p_power.psePoweringStatus = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_pdStatus:
+		switch (value) {
+		case LLDP_DOT3_POWER_STATUS_PD_POWERED_SINGLE_SIGNATURE:
+		case LLDP_DOT3_POWER_STATUS_PD_2PAIR_DUAL_SIGNATURE:
+		case LLDP_DOT3_POWER_STATUS_PD_4PAIR_DUAL_SIGNATURE:
+			port->p_power.pdPoweredStatus = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_pairsExt:
+		switch (value) {
+		case LLDP_DOT3_POWERPAIRS_PSE_A:
+		case LLDP_DOT3_POWERPAIRS_PSE_B:
+		case LLDP_DOT3_POWERPAIRS_PSE_BOTH:
+			port->p_power.psePowerPairs = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_dualSigAClass:
+		switch (value) {
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_1:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_2:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_3:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_4:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_5:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_SINGLE_SIG_PD:
+			port->p_power.powerClassA = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_dualSigBClass:
+		switch (value) {
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_1:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_2:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_3:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_4:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_5:
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_SINGLE_SIG_PD:
+			port->p_power.powerClassB = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_classExt:
+		switch (value) {
+		case LLDP_DOT3_POWER_CLASS_1:
+		case LLDP_DOT3_POWER_CLASS_2:
+		case LLDP_DOT3_POWER_CLASS_3:
+		case LLDP_DOT3_POWER_CLASS_4:
+		case LLDP_DOT3_POWER_CLASS_5:
+		case LLDP_DOT3_POWER_CLASS_6:
+		case LLDP_DOT3_POWER_CLASS_7:
+		case LLDP_DOT3_POWER_CLASS_8:
+		case LLDP_DOT3_POWER_CLASS_DUAL_SIG_PD:
+			port->p_power.powerClassExt = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_powerTypeExt:
+		switch (value) {
+		case LLDP_DOT3_POWER_TYPE_3_PSE:
+		case LLDP_DOT3_POWER_TYPE_4_PSE:
+		case LLDP_DOT3_POWER_TYPE_3_PD_SINGLE_SIG:
+		case LLDP_DOT3_POWER_TYPE_3_PD_DUAL_SIG:
+		case LLDP_DOT3_POWER_TYPE_4_PD_SINGLE_SIG:
+		case LLDP_DOT3_POWER_TYPE_4_PD_DUAL_SIG:
+			port->p_power.powerTypeExt = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_pdLoad:
+		switch (value) {
+		case LLDP_DOT3_POWER_PD_LOAD_AB_ISOLATION_TRUE:
+		case LLDP_DOT3_POWER_PD_LOAD_AB_ISOLATION_FALSE:
+			port->p_power.pdLoad = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_pseMaxPower:
+		if(value < 100 || value > 99900) goto bad;
+		port->p_power.pseMaxAvailPower = value / 100;
+		return atom;
+	case lldpctl_k_dot3_power_autoclassSupport:
+		switch (value) {
+		case LLDP_DOT3_POWER_AUTOCLASS_PSE_SUPPORT_TRUE:
+		case LLDP_DOT3_POWER_AUTOCLASS_PSE_SUPPORT_FALSE:
+			port->p_power.pseAutoclassSupport = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_autoclassCompleted:
+		switch (value) {
+		case LLDP_DOT3_POWER_AUTOCLASS_COMPLETED_TRUE:
+		case LLDP_DOT3_POWER_AUTOCLASS_COMPLETED_IDLE:
+			port->p_power.autoClass_completed = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_autoclassRequest:
+		switch (value) {
+		case LLDP_DOT3_POWER_AUTOCLASS_REQUEST_TRUE:
+		case LLDP_DOT3_POWER_AUTOCLASS_REQUEST_IDLE:
+			port->p_power.autoClass_request = value;
+			return atom;
+		default: goto bad;
+		}
+	case lldpctl_k_dot3_power_powerDownRequest:
+		/*All values are valid, only 0x1D will power it down, everything else ignored*/
+		port->p_power.powerdown_request_pd = value;
+	case lldpctl_k_dot3_power_powerDownTime:
+		/*magic number is 2^18, the number of bits available for power down time */
+		if(value < 0 || value > 262143) goto bad;
+		port->p_power.powerdown_time = value;
 		return atom;
 	default:
 		SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);
