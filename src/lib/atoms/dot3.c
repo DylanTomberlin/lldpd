@@ -2,8 +2,7 @@
 /*
  * Copyright (c) 2015 Vincent Bernat <vincent@bernat.im>
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
+ * Permission to use, copy, modify, and/or distribute this software for any * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
@@ -218,7 +217,7 @@ static struct atom_map port_dot3_power_powerDownRequest_map = {
 };
 
 /*Registering maps allows them to be used in conf-power.c in the register commands functions*/
-//TODO, does priority matter?
+//TODO, does priority matter? For debugging on heartland, try changing priorities
 ATOM_MAP_REGISTER(port_dot3_power_pairs_map,    4);
 ATOM_MAP_REGISTER(port_dot3_power_class_map,    5);
 ATOM_MAP_REGISTER(port_dot3_power_priority_map, 6);
@@ -278,7 +277,6 @@ _lldpctl_atom_get_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 	}
 }
 
-//TODO, add bt support
 static long int
 _lldpctl_atom_get_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 {
@@ -310,6 +308,42 @@ _lldpctl_atom_get_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 		return port->p_power.requested * 100;
 	case lldpctl_k_dot3_power_allocated:
 		return port->p_power.allocated * 100;
+	case lldpctl_k_dot3_power_requestedA:
+		return port->p_power.requestedA * 100;
+	case lldpctl_k_dot3_power_requestedB:
+		return port->p_power.requestedB * 100;
+	case lldpctl_k_dot3_power_allocatedA:
+		return port->p_power.allocatedA * 100;
+	case lldpctl_k_dot3_power_allocatedB:
+		return port->p_power.allocatedB * 100;
+	case lldpctl_k_dot3_power_pseStatus:
+		return port->p_power.psePoweringStatus;
+	case lldpctl_k_dot3_power_pdStatus:
+		return port->p_power.pdPoweredStatus;
+	case lldpctl_k_dot3_power_pairsExt:
+		return port->p_power.psePowerPairs;
+	case lldpctl_k_dot3_power_dualSigAClass:
+		return port->p_power.powerClassA;
+	case lldpctl_k_dot3_power_dualSigBClass:
+		return port->p_power.powerClassB;
+	case lldpctl_k_dot3_power_classExt:
+		return port->p_power.powerClassExt;
+	case lldpctl_k_dot3_power_powerTypeExt:
+		return port->p_power.powerTypeExt;
+	case lldpctl_k_dot3_power_pdLoad:
+		return port->p_power.pdLoad;
+	case lldpctl_k_dot3_power_pseMaxPower:
+		return port->p_power.pseMaxAvailPower;
+	case lldpctl_k_dot3_power_autoclassSupport:
+		return port->p_power.pseAutoclassSupport;
+	case lldpctl_k_dot3_power_autoclassCompleted:
+		return port->p_power.autoClass_completed;
+	case lldpctl_k_dot3_power_autoclassRequest:
+		return port->p_power.autoClass_request;
+	case lldpctl_k_dot3_power_powerDownRequest:
+		return port->p_power.powerdown_time;
+	case lldpctl_k_dot3_power_powerDownTime:
+		return port->p_power.powerdown_request_pd;
 	default:
 		return SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);
 	}
@@ -588,6 +622,7 @@ _lldpctl_atom_set_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 	}
 }
 
+//TODO, make sure all of these getter setters are updated
 static struct atom_builder dot3_power =
 	{ atom_dot3_power, sizeof(struct _lldpctl_atom_dot3_power_t),
 	  .init = _lldpctl_atom_new_dot3_power,
