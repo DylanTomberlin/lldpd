@@ -139,6 +139,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 			    "unable to set LLDP Dot3 power value for %s on %s. %s.",
 			    what, name, lldpctl_last_strerror(conn));
 			ok = 0;
+		/*802.3at*/
 		} else if (cmdenv_get(env, "typeat")) {
 			int typeat = cmdenv_get(env, "typeat")[0] - '0';
 			const char *source = cmdenv_get(env, "source");
@@ -172,8 +173,16 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				log_warnx("lldpctl", "unable to set LLDP Dot3 power value for %s on %s. %s.",
 				    what, name, lldpctl_last_strerror(conn));
 				ok = 0;
+			/*802.3bt*/
 			} else if (cmdenv_get(env, "dualmode")) {
 				//add cmdenv_get calls
+				const char *pdStatus = cmdenv_get(env, "pdStatus");
+				const char *pseStatus = cmdenv_get(env, "pseStatus");
+				const char *pairsExt = cmdenv_get(env, "pairsExt");
+				const char *aClass = cmdenv_get(env, "aClass");
+				const char *bClass = cmdenv_get(env, "bClass");
+				const char *classExt = cmdenv_get(env, "classExt");
+				const char *powerDownRequest = cmdenv_get(env, "powerDownRequest");
 				if(
 				    (what = "requested power A", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_requestedA,
@@ -186,7 +195,72 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					cmdenv_get(env, "allocatedA"))) == NULL ||
 				    (what = "allocated power B", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_allocatedB,
-					cmdenv_get(env, "allocatedB"))) == NULL 
+					cmdenv_get(env, "allocatedB"))) == NULL ||
+				/*Power Status field*/
+				    (what = "PD status", lldpctl_atom_set_int(dot3_power,
+					lldpctl_k_dot3_power_pdStatus,
+					(!strcmp(pdStatus, "single"))?		LLDP_DOT3_POWER_STATUS_PD_POWERED_SINGLE_SIGNATURE:
+					(!strcmp(pdStatus, "dual2pair"))?	LLDP_DOT3_POWER_STATUS_PD_2PAIR_DUAL_SIGNATURE:
+					(!strcmp(pdStatus, "dual4pair"))?	LLDP_DOT3_POWER_STATUS_PD_4PAIR_DUAL_SIGNATURE:
+					0)) == NULL ||
+				    (what = "PSE status", lldpctl_atom_set_int(dot3_power,
+					lldpctl_k_dot3_power_pseStatus,
+					(!strcmp(pseStatus, "2pair"))?		LLDP_DOT3_POWER_STATUS_PSE_2PAIR:
+					(!strcmp(pseStatus, "single4pair"))?	LLDP_DOT3_POWER_STATUS_PSE_4PAIR_SINGLE_SIGNATURE:
+					(!strcmp(pseStatus, "dual4pair"))?	LLDP_DOT3_POWER_STATUS_PSE_4PAIR_DUAL_SIGNATURE:
+					0)) == NULL ||
+				    (what = "pairs extension", lldpctl_atom_set_int(dot3_power,
+					lldpctl_k_dot3_power_pairsExt,
+					(!strcmp(pairsExt, "both"))?	LLDP_DOT3_POWERPAIRS_PSE_BOTH:
+					(!strcmp(pairsExt, "signal"))?	LLDP_DOT3_POWERPAIRS_PSE_A:
+					(!strcmp(pairsExt, "spare"))?	LLDP_DOT3_POWERPAIRS_PSE_B:
+					0)) == NULL ||
+				    (what = "power class pair A", cmdenv_get(env, "aClass")?
+					lldpctl_atom_set_str(dot3_power,
+					    lldpctl_k_dot3_power_dualSigAClass,
+					    cmdenv_get(env, "aClass")):
+					lldpctl_atom_set_int(dot3_power,
+					    lldpctl_k_dot3_power_dualSigAClass, 0)) == NULL ||
+				    (what = "power class pair B", cmdenv_get(env, "bClass")?
+					lldpctl_atom_set_str(dot3_power,
+					    lldpctl_k_dot3_power_dualSigBClass,
+					    cmdenv_get(env, "bClass")):
+					lldpctl_atom_set_int(dot3_power,
+					    lldpctl_k_dot3_power_dualSigBClass, 0)) == NULL ||
+				    (what = "power class extension", cmdenv_get(env, "classExt")?
+					lldpctl_atom_set_str(dot3_power,
+					    lldpctl_k_dot3_power_classExt,
+					    cmdenv_get(env, "classExt")):
+					lldpctl_atom_set_int(dot3_power,
+					    lldpctl_k_dot3_power_classExt, 0)) == NULL ||
+				/*system setup field*/
+				    (what = "bt power type extension", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_powerTypeExt,
+					cmdenv_get(env, "typebt"))) == NULL ||
+				    (what = "pd load", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_pdLoad,
+					cmdenv_get(env, "pdLoad"))) == NULL ||
+				/*PSE max power field*/
+				    (what = "pse max available power", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_pseMaxPower,
+					cmdenv_get(env, "pseMaxPower"))) == NULL ||
+				/*autoclass field*/
+				    (what = "auto class support", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_autoclassSupport,
+					cmdenv_get(env, "autoclassSupport"))) == NULL ||
+				    (what = "autoclass complete", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_autoclassCompleted,
+					cmdenv_get(env, "autoclassCompleted"))) == NULL ||
+				    (what = "autoclass request", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_autoclassRequest,
+					cmdenv_get(env, "autoclassRequest"))) == NULL ||
+				/*powerdown field*/
+				    (what = "power down request", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_powerDownRequest,
+					cmdenv_get(env, "powerDownRequest"))) == NULL ||
+				    (what = "power down time", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_powerDownTime,
+					cmdenv_get(env, "powerDownTime"))) == NULL
 				) {
 					//log_warnx
 					log_warnx("lldpctl", "unable to set LLDP Dot3 power value for %s on %s. %s.",
