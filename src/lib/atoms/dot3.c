@@ -68,9 +68,9 @@ static struct atom_map port_dot3_power_class_map = {
 static struct atom_map port_dot3_power_dualMode_map = {
 	.key = lldpctl_k_dot3_power_dualMode,
 	.map = {
-		{ LLDP_DOT3_POWER_DUAL_MODE_SUP,	"simultaneous powering of both modes supported" },
-		{ LLDP_DOT3_POWER_DUAL_MODE_UNSUP,	"simultaneous powering of both modes not supported" },
-		{ 0, NULL },
+		{ LLDP_DOT3_POWER_DUAL_MODE_SUP,	"supportPDorPSE"},
+		{ LLDP_DOT3_POWER_DUAL_MODE_UNSUP,	"noSupportPD" },
+		{ 0, NULL }
 	},
 };
 
@@ -426,8 +426,8 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 		return atom;
 	case lldpctl_k_dot3_power_dualMode:
 		switch(value) {
-		case 1:
-		case 2:
+		case LLDP_DOT3_POWER_DUAL_MODE_SUP:
+		case LLDP_DOT3_POWER_DUAL_MODE_UNSUP:
 			port->p_power.dualMode = value;
 			return atom;
 		default: goto bad;
@@ -599,6 +599,11 @@ bad:
 	return NULL;
 }
 
+/*This function sets the power atom fields.  Key defines which field.  Value is
+the string, which corresponds to a map defined above. WARNING: it is case insensitive,
+so commands can be registered as something different that what the map displays.
+Ex: the device-type field is registered (and stored in env) as "pd", but the map is "PD"*/
+
 static lldpctl_atom_t*
 _lldpctl_atom_set_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
     const char *value)
@@ -616,6 +621,10 @@ _lldpctl_atom_set_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 	case lldpctl_k_dot3_power_priority:
 		return _lldpctl_atom_set_int_dot3_power(atom, key,
 		    map_reverse_lookup(port_dot3_power_priority_map.map, value));
+	case lldpctl_k_dot3_power_dualMode:
+		return _lldpctl_atom_set_int_dot3_power(atom, key,
+		    map_reverse_lookup(port_dot3_power_dualMode_map.map, value));
+//TODO need to add more cases
 	default:
 		SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);
 		return NULL;
