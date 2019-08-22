@@ -624,6 +624,11 @@ _lldpctl_atom_set_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 	case lldpctl_k_dot3_power_dualMode:
 		return _lldpctl_atom_set_int_dot3_power(atom, key,
 		    map_reverse_lookup(port_dot3_power_dualMode_map.map, value));
+/*
+	case lldpctl_k_dot3_power_autoclassRequest:
+		return _lldpctl_atom_set_int_dot3_power(atom, key,
+		    map_reverse_lookup(port_dot3_power_dualMode_map.map, value));
+*/
 //TODO need to add more cases
 	default:
 		SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);

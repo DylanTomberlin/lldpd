@@ -87,6 +87,13 @@ cmd_store_prio_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,
 {
 	return cmd_store_something_env_value_and_pop2("priority", env, value);
 }
+/*check that pd is dual signature device*/
+static int
+cmd_check_pd_dual_signature(struct cmd_env *env, void *arg)
+{
+	const char *typebt = cmdenv_get(env, "typebt");
+	return !strcmp(typebt, "pd3dual") || !strcmp(typebt, "pd4dual");
+}
 
 /*This function takes values stored in the command line environment and
 sets the atom values accordingly*/
@@ -183,7 +190,8 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				lldpctl_k_dot3_power_allocated,
 				cmdenv_get(env, "allocated"))) == NULL 
 			) {
-				log_warnx("lldpctl", "unable to set LLDP Dot3 power value for %s on %s. %s.",
+				log_warnx("lldpctl",
+				    "unable to set LLDP Dot3 power value for %s on %s. %s.",
 				    what, name, lldpctl_last_strerror(conn));
 				ok = 0;
 			/*802.3bt*/
@@ -205,16 +213,20 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				if(
 				    (what = "requested power A", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_requestedA,
-					cmdenv_get(env, "aRequested"))) == NULL ||
+					cmdenv_get(env, "aRequested"))
+					|| !cmd_check_pd_dual_signature(env,NULL)) == NULL ||
 				    (what = "requested power B", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_requestedB,
-					cmdenv_get(env, "bRequested"))) == NULL ||
+					cmdenv_get(env, "bRequested"))
+					|| !cmd_check_pd_dual_signature(env,NULL)) == NULL ||
 				    (what = "allocated power A", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_allocatedA,
-					cmdenv_get(env, "aAllocated"))) == NULL ||
+					cmdenv_get(env, "aAllocated"))
+					|| !cmd_check_pd_dual_signature(env,NULL)) == NULL ||
 				    (what = "allocated power B", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_allocatedB,
-					cmdenv_get(env, "bAllocated"))) == NULL ||
+					cmdenv_get(env, "bAllocated"))
+					|| !cmd_check_pd_dual_signature(env,NULL)) == NULL ||
 				/*Power Status field*/
 				    (what = "PD status", (pdStatus) ? lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_pdStatus,
@@ -307,7 +319,8 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				/*PSE max power field*/
 				    (what = "pse max available power", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_pseMaxPower,
-					cmdenv_get(env, "pseMaxPower"))) == NULL ||
+					cmdenv_get(env, "pseMaxPower"))
+					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == NULL || /*make non-mandatory for PDs*/
 				/*autoclass field*/
 /*These are the new ones I was writing, but thinking the old ones below are actually good.
 				    (what = "auto class support", lldpctl_atom_set_int(dot3_power,
@@ -320,22 +333,37 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 */
 				    (what = "auto class support", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_autoclassSupport,
-					cmdenv_get(env, "autoclassSupport"))) == NULL ||
+					cmdenv_get(env, "autoclassSupport"))
+					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == NULL || /*make non-mandatory for PDs*/
 				    (what = "autoclass complete", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_autoclassCompleted,
-					cmdenv_get(env, "autoclassCompleted"))) == NULL ||
+					cmdenv_get(env, "autoclassCompleted"))
+					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == NULL || /*make non-mandatory for PDs*/
+/*
 				    (what = "autoclass request", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_autoclassRequest,
-					cmdenv_get(env, "autoclassRequest"))) == NULL ||
+					cmdenv_get(env, "autoclassRequest"))
+					|| !strcmp("pse", cmdenv_get(env, "device-type"))) == NULL ||*/ /*make non-mandatory for PSEs*/
+		    		    (what = "autoclass request flag", lldpctl_atom_set_int(dot3_power,
+					lldpctl_k_dot3_power_autoclassRequest,
+					cmdenv_get(env, "autoclassRequest")?1:0)) == NULL ||
 				/*powerdown field*/
+/*
 				    (what = "power down request", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_powerDownRequest,
 					cmdenv_get(env, "powerDownRequest"))) == NULL ||
+*/
+		    		    (what = "power down request flag", lldpctl_atom_set_int(dot3_power,
+					lldpctl_k_dot3_power_powerDownRequest,
+					cmdenv_get(env, "powerDownRequest")?LLDP_DOT3_POWER_POWERDOWN_REQUEST:0)) == NULL ||
 				    (what = "power down time", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_powerDownTime,
-					cmdenv_get(env, "powerDownTime"))) == NULL
+					cmdenv_get(env, "powerDownTime"))
+					/*make non-mandatory for unless powerdown request flag has been*/
+					|| !cmdenv_get(env, "powerDownRequest")) == NULL
 				) {
-					log_warnx("lldpctl", "unable to set LLDP Dot3 power value for %s on %s. %s.",
+					log_warnx("lldpctl",
+					    "unable to set LLDP Dot3 power value for %s on %s. %s.",
 					    what, name, lldpctl_last_strerror(conn));
 					ok = 0;
 				}
@@ -695,10 +723,10 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		"pseStatus", "what signature and pairs of PD is pse powering? (Mandatory)",
 		cmd_check_dualmode_and_is_pse, NULL, "pseStatus");
 	commands_new(pseStatus,
-		"dual4Pair", "4-pair powering dual-signature PD",
+		"dual4pair", "4-pair powering dual-signature PD",
 		NULL, cmd_store_env_value_and_pop2, "pseStatus");
 	commands_new(pseStatus,
-		"single4Pair", "4-pair powering single-signature PD",
+		"single4pair", "4-pair powering single-signature PD",
 		NULL, cmd_store_env_value_and_pop2, "pseStatus");
 	commands_new(pseStatus,
 		"2Pair", "2-pair powering",
@@ -710,10 +738,10 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		"pdStatus", "what signature and pairs of PD? (Mandatory)",
 		cmd_check_dualmode_and_is_pd, NULL, "pdStatus");
 	commands_new(pdStatus,
-		"dual4Pair", "PD is being powered by 4-pairs, dual signature",
+		"dual4pair", "PD is being powered by 4-pairs, dual signature",
 		NULL, cmd_store_env_value_and_pop2, "pdStatus");
 	commands_new(pdStatus,
-		"dual2Pair", "PD is being powered by 2-pairs, dual signature",
+		"dual2pair", "PD is being powered by 2-pairs, dual signature",
 		NULL, cmd_store_env_value_and_pop2, "pdStatus");
 	commands_new(pdStatus,
 		"single", "single signature PD",
@@ -829,6 +857,7 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		commands_new(configure_dot3power,
 		    "pseMaxPower", "Maximum power a PSE can grant",
 		    cmd_check_dualmode_and_is_pse, NULL, "pseMaxPower"),
+		    //cmd_check_dualmode, NULL, "pseMaxPower"),
 		NULL, "Maximum power a PSE can grant in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "pseMaxPower");
 
