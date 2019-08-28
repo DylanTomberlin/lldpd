@@ -160,7 +160,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 		} else if (cmdenv_get(env, "typeat")) {
 			int typeat = cmdenv_get(env, "typeat")[0] - '0';
 			const char *source = cmdenv_get(env, "source");
-			const char *dualmode = cmdenv_get(env, "dualmode");
+			const char *pid4 = cmdenv_get(env, "pid4");
 			if (
 			    (what = "802.3at type", lldpctl_atom_set_int(dot3_power,
 				    lldpctl_k_dot3_power_type,
@@ -176,13 +176,13 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 /*
 			    (what = "dual mode", lldpctl_atom_set_int(dot3_power,
 				lldpctl_k_dot3_power_dualMode,
-				(!strcmp(dualmode, "supportPDorPSE"))?LLDP_DOT3_POWER_DUAL_MODE_SUP:
+				(!strcmp(pid4, "supportPDorPSE"))?LLDP_DOT3_POWER_DUAL_MODE_SUP:
 				LLDP_DOT3_POWER_DUAL_MODE_UNSUP)) == NULL ||
 */
-			    (what = "dual mode", cmdenv_get(env, "dualmode")?
+			    (what = "PD 4 PID", cmdenv_get(env, "pid4")?
 				lldpctl_atom_set_str(dot3_power,
 				    lldpctl_k_dot3_power_dualMode,
-				    cmdenv_get(env, "dualmode")):
+				    cmdenv_get(env, "pid4")):
 				lldpctl_atom_set_int(dot3_power,
 				    lldpctl_k_dot3_power_dualMode, 0)) == NULL ||
 /*
@@ -204,7 +204,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				    what, name, lldpctl_last_strerror(conn));
 				ok = 0;
 			/*802.3bt*/
-			} else if (cmdenv_get(env, "dualmode")) {
+			} else if (cmdenv_get(env, "pid4")) {
 				//add cmdenv_get calls
 				const char *pdStatus = cmdenv_get(env, "pdStatus");
 				const char *pseStatus = cmdenv_get(env, "pseStatus");
@@ -432,33 +432,33 @@ cmd_check_typebt_and_pse_but_no(struct cmd_env *env, void *arg)
 	if (devicetype == NULL) {return 0;}
 	return cmd_check_typebt_but_no(env, arg) && !strcmp(devicetype, "pse");
 }
-/*check that PD 4PID field is set, (called dualmode) indicating 802.3bt extension*/
+/*check that PD 4PID field is set, (called pid4) indicating 802.3bt extension*/
 //static int
-//cmd_check_dualmode(struct cmd_env *env, void *arg)
+//cmd_check_pid4(struct cmd_env *env, void *arg)
 //{
-//	return !!cmdenv_get(env, "dualmode");
+//	return !!cmdenv_get(env, "pid4");
 //}
 ///*check that PD 4PID field is true and check that we are advertising being a PSE*/
 //static int
-//cmd_check_dualmode_and_is_pse(struct cmd_env *env, void *arg)
+//cmd_check_pid4_and_is_pse(struct cmd_env *env, void *arg)
 //{
 //	const char *devicetype = cmdenv_get(env, "device-type");
 //	if (devicetype == NULL) {return 0;}
-//	return (!!cmdenv_get(env, "dualmode")) && !strcmp(devicetype, "pse");
+//	return (!!cmdenv_get(env, "pid4")) && !strcmp(devicetype, "pse");
 //}
 ///*check that PD 4PID field is true and check that we are advertising being a PD*/
 //static int
-//cmd_check_dualmode_and_is_pd(struct cmd_env *env, void *arg)
+//cmd_check_pid4_and_is_pd(struct cmd_env *env, void *arg)
 //{
 //	const char *devicetype = cmdenv_get(env, "device-type");
 //	if (devicetype == NULL) {return 0;}
-//	return (!!cmdenv_get(env, "dualmode")) && !strcmp(devicetype, "pd");
+//	return (!!cmdenv_get(env, "pid4")) && !strcmp(devicetype, "pd");
 //}
 //static int
-//cmd_check_dualmode_but_no(struct cmd_env *env, void *arg)
+//cmd_check_pid4_but_no(struct cmd_env *env, void *arg)
 //{
 //	const char *what = arg;
-//	if (!cmdenv_get(env, "dualmode")) return 0;
+//	if (!cmdenv_get(env, "pid4")) return 0;
 //	if (cmdenv_get(env, what)) return 0;
 //	return 1;
 //}
@@ -684,23 +684,23 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 
 	/*TODO, currently, this option must be set to be able to fill out any
 	other bt fields.  Check this is truely what the standard is saying*/
-	//TODO, make this so only need to set dualmode without saying supported,
+	//TODO, make this so only need to set pid4 without saying supported,
 	//i.e. defaults to not supported unless is?
 	/* 802.3bt PD 4PID (dual mode) */
-	struct cmd_node *dualmode = commands_new(
+	struct cmd_node *pid4 = commands_new(
 		configure_dot3power,
-		"dualmode", "802.3bt pd supports 4 pair power",
-		cmd_check_typebt_but_no, NULL, "dualmode");
+		"pid4", "802.3bt pd supports 4 pair power",
+		cmd_check_typebt_and_pd_but_no, NULL, "pid4");
 		//TODO, need to refactor, since this is only true for PDs, thus shouldn't be a gate keeper for both :-(
-		//cmd_check_typeat_but_no_and_is_pd, NULL, "dualmode");
-		//cmd_check_bt, NULL, "dualmode");
+		//cmd_check_typeat_but_no_and_is_pd, NULL, "pid4");
+		//cmd_check_bt, NULL, "pid4");
 	commands_new(
-		dualmode,
-		"supportPDorPSE", "802.3bt pd supports 4 pair power",
-		NULL, cmd_store_env_value_and_pop2, "dualmode");
-	commands_new(dualmode,
-		"noSupportPD", "802.3bt pd does not support 4 pair power",
-		NULL, cmd_store_env_value_and_pop2, "dualmode");
+		pid4,
+		"supported", "PD supports powering of both modes simultaneously",
+		NULL, cmd_store_env_value_and_pop2, "pid4");
+	commands_new(pid4,
+		"unsupported", "PD does not support powering of both modes simultaneously",
+		NULL, cmd_store_env_value_and_pop2, "pid4");
 	/* Priority */
 	struct cmd_node *priority = commands_new(
 		configure_dot3power,
@@ -895,7 +895,6 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		commands_new(configure_dot3power,
 		    "pseMaxPower", "Maximum power a PSE can grant",
 		    cmd_check_typebt_and_pse_but_no, NULL, "pseMaxPower"),
-		    //cmd_check_dualmode, NULL, "pseMaxPower"),
 		NULL, "Maximum power a PSE can grant in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "pseMaxPower");
 
