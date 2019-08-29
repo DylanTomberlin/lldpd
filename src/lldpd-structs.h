@@ -122,7 +122,7 @@ struct lldpd_dot3_power {
 	u_int8_t		powertype; /* If set to LLDP_DOT3_POWER_8023AT_OFF,
 					      following fields have no meaning */
 	u_int8_t		source;
-	u_int8_t		dualMode; /*802.3bt addition*/
+	u_int8_t		dualMode; /*802.3bt addition, TODO need to refactor to read pid4, here and everywhere*/
 	u_int8_t		priority;
 	u_int16_t		requested;
 	u_int16_t		allocated;

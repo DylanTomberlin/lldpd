@@ -28,7 +28,7 @@ class TestLldpDot3(object):
           'device-type': 'PSE',
           'pairs': 'spare',
           'class': 'class 3'}),
-        ("pd supported enabled powerpairs spare class class-3 type 1 source "
+        ("pd supported enabled powerpairs spare class class-3 typeat 1 source "
          "pse priority low requested 10000 allocated 15000",
          {'supported': 'yes',
           'enabled': 'yes',
