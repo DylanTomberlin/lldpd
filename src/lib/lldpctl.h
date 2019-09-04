@@ -231,7 +231,7 @@ int lldpctl_release(lldpctl_conn_t *conn);
  * translate this error code.
  *
  * When a function returns an integer, it may return a negative value. It
- * usually means this is an error but some functions may return a legetimate
+ * usually means this is an error but some functions may return a legitimate
  * negative value (for example @ref lldpctl_atom_get_int()). When there is a
  * doubt, @ref lldpctl_last_error() should be checked.
  *
@@ -642,13 +642,13 @@ lldpctl_atom_t *lldpctl_get_default_port(lldpctl_conn_t *conn);
  * written. An atom marked with (IS) can be retrieved as an integer and features
  * an appropriate representation as a string (usually, the name of a constant)
  * which is more meaningful than just the integer. An atom marked as (I) can be
- * retrieved and as a string. In the later case, this is just a string
- * representation of the integer. An atom marked with (AL) can be retrieved as
- * an atom only and can be iterated over. This is usually a list of things. An
- * atom marked (I,W) can be read as an integer or a string and can be written as
- * an integer. The change would not be commited until the atom is written to the
- * nearest atom supporting (A,WO) operation (eventually with an indirection, i.e
- * first write to a (A,W), then to a (A,WO)).
+ * retrieved as an integer and as a string. In the later case, this is just a
+ * string representation of the integer. An atom marked with (AL) can be
+ * retrieved as an atom only and can be iterated over. This is usually a list of
+ * things. An atom marked (I,W) can be read as an integer or a string and can be
+ * written as an integer. The change would not be commited until the atom is
+ * written to the nearest atom supporting (A,WO) operation (eventually with an
+ * indirection, i.e first write to a (A,W), then to a (A,WO)).
  */
 typedef enum {
 	lldpctl_k_config_tx_interval, /**< `(I,WO)` Transmit interval. When set to -1, it is meant to transmit now. */
@@ -825,6 +825,7 @@ typedef enum {
 	lldpctl_k_med_power_val, /**< `(I,W)` LLDP MED power value */
 
 	lldpctl_k_mgmt_ip = 3000,	/**< `(S)` IP address */
+	lldpctl_k_mgmt_iface_index = 30001,	/**< `(I)` Interface index */
 
 	lldpctl_k_tx_cnt = 4000,	/**< `(I)` tx cnt. Only works for a local port. */
 	lldpctl_k_rx_cnt,	/**< `(I)` rx cnt. Only works for a local port. */

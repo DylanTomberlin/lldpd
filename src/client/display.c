@@ -258,6 +258,9 @@ display_chassis(struct writer* w, lldpctl_atom_t* chassis, int details)
 	lldpctl_atom_foreach(mgmts, mgmt) {
 		tag_datatag(w, "mgmt-ip", "MgmtIP",
 		    lldpctl_atom_get_str(mgmt, lldpctl_k_mgmt_ip));
+		if (lldpctl_atom_get_int(mgmt, lldpctl_k_mgmt_iface_index))
+			tag_datatag(w, "mgmt-iface", "MgmtIface",
+			    lldpctl_atom_get_str(mgmt, lldpctl_k_mgmt_iface_index));
 	}
 	lldpctl_atom_dec_ref(mgmts);
 
@@ -668,8 +671,8 @@ display_interface(lldpctl_conn_t *conn, struct writer *w, int hidden,
  *
  * @param conn       Connection to lldpd.
  * @param w          Writer.
- * @param hidden     Whatever to show hidden ports.
  * @param env        Environment from which we may find the list of ports.
+ * @param hidden     Whatever to show hidden ports.
  * @param details    Level of details we need (DISPLAY_*).
  */
 void
