@@ -151,8 +151,8 @@ check_received_port_dot3(
 		sport->p_power.powertype);
 	ck_assert_int_eq(rport->p_power.source,
 		sport->p_power.source);
-	ck_assert_int_eq(rport->p_power.dualMode,
-		sport->p_power.dualMode);
+	ck_assert_int_eq(rport->p_power.pid4,
+		sport->p_power.pid4);
 	ck_assert_int_eq(rport->p_power.priority,
 		sport->p_power.priority);
 	ck_assert_int_eq(rport->p_power.requested,
@@ -490,7 +490,7 @@ START_TEST (test_send_rcv_dot3)
 	hardware.h_lport.p_power.class = 0; /*undefined for pd*/
 	hardware.h_lport.p_power.powertype = LLDP_DOT3_POWER_8023AT_TYPE1;
 	hardware.h_lport.p_power.source = LLDP_DOT3_POWER_SOURCE_PRIMARY;
-	hardware.h_lport.p_power.dualMode = LLDP_DOT3_POWER_DUAL_MODE_SUP;
+	hardware.h_lport.p_power.pid4 = LLDP_DOT3_POWER_4PID_SUP;
 	hardware.h_lport.p_power.priority = LLDP_DOT3_POWER_PRIO_LOW;
 	hardware.h_lport.p_power.requested = 0x12;
 	hardware.h_lport.p_power.allocated = 0x34;
