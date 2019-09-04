@@ -129,7 +129,7 @@ commands_hidden(struct cmd_node *node)
 }
 
 /**
- * Create a new node acessible by any user.
+ * Create a new node accessible by any user.
  *
  * @param root  The node we want to attach this node.
  * @param token Token to enter this node. Or @c NULL if no token is needed.

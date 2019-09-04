@@ -707,7 +707,7 @@ typedef enum {
 	lldpctl_k_dot3_power_class, /**< `(IS,W)` Power class. */
 	lldpctl_k_dot3_power_type, /**< `(I,W)` 802.3AT power type */
 	lldpctl_k_dot3_power_source, /**< `(IS,W)` 802.3AT power source */
-	lldpctl_k_dot3_power_dualMode, /**< `(I,W)` 802.3BT PD 4PID, does PD support powering both modes simult.? */
+	lldpctl_k_dot3_power_4pid, /**< `(I,W)` 802.3BT PD 4PID, does PD support powering both modes simult.? */
 	lldpctl_k_dot3_power_priority, /**< `(IS,W)` 802.3AT power priority */
 	lldpctl_k_dot3_power_allocated, /**< `(I,W)` 802.3AT power allocated */
 	lldpctl_k_dot3_power_requested, /**< `(I,W)` 802.3AT power requested */

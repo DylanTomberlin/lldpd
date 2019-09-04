@@ -25,9 +25,6 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 
-//TEMP
-#include <stdio.h>
-
 static int
 lldpd_af_to_lldp_proto(int af)
 {
@@ -317,16 +314,15 @@ static int _lldp_send(struct lldpd *global,
 					   (((port->p_power.devicetype ==
 					      LLDP_DOT3_POWER_PSE)?0:1) << 6) |
 					   ((port->p_power.source   %(1<< 2))<<4) |
-					   (((port->p_power.dualMode ==
-					      LLDP_DOT3_POWER_DUAL_MODE_SUP)?1:0)<<2) |
+					   (((port->p_power.pid4 ==
+					      LLDP_DOT3_POWER_4PID_SUP)?1:0)<<2) |
 					   ((port->p_power.priority %(1<< 2))<<0))) &&
 			      POKE_UINT16(port->p_power.requested) &&
 			      POKE_UINT16(port->p_power.allocated)))
 				goto toobig;
 		}
 		/* 802.3bt */
-		/* if(port->p_power.powerTypeExt != LLDP_DOT3_POWER_TYPE_BTOFF) {*/
-		if(port->p_power.dualMode) {
+		if(port->p_power.pid4) {
 			if(!(
 			     POKE_UINT16(port->p_power.requestedA) &&
 			     POKE_UINT16(port->p_power.requestedB) &&
@@ -336,9 +332,8 @@ static int _lldp_send(struct lldpd *global,
 			     POKE_UINT8(port->p_power.systemSetup) &&
 			     POKE_UINT16(port->p_power.pseMaxAvailPower) &&
 			     POKE_UINT8(port->p_power.autoClass) &&
+			     //TODO this is probably incorrect endianess, switch didn't read same shutdown time
 			/* power down is 3 octets long, might have issues with endianness */ 
-			     //giving seg faults:
-			     //POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)))
 			     POKE_UINT8((port->p_power.powerDown>> 16) & 0xff) && 
 			     POKE_UINT8((port->p_power.powerDown>> 8) & 0xff) && 
 			     POKE_UINT8((port->p_power.powerDown>> 0) & 0xff))) 
@@ -643,7 +638,8 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 	const char dcbx[] = LLDP_TLV_ORG_DCBX;
 	unsigned char orgid[3];
 	int length, gotend = 0, ttl_received = 0;
-	int tlv_size, tlv_type, tlv_subtype; u_int8_t *pos, *tlv;
+	int tlv_size, tlv_type, tlv_subtype;
+	u_int8_t *pos, *tlv;
 	char *b;
 #ifdef ENABLE_DOT1
 	struct lldpd_vlan *vlan = NULL;
@@ -964,7 +960,7 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.powertype = PEEK_UINT8;
 						port->p_power.source =
 						    (port->p_power.powertype & (1<<5 | 1<<4)) >> 4;
-						port->p_power.dualMode =
+						port->p_power.pid4 =
 							(port->p_power.powertype & (1 << 2) >> 2);
 						port->p_power.priority =
 						    (port->p_power.powertype & (1<<1 | 1<<0));

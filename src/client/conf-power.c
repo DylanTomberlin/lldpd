@@ -20,7 +20,6 @@
 
 #include "client.h"
 #include "../log.h"
-//#include "../lldctl.h"/*included for error enum*/
 
 static int
 cmd_medpower(struct lldpctl_conn_t *conn, struct writer *w,
@@ -173,22 +172,12 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				(!strcmp(source, "local"))?  LLDP_DOT3_POWER_SOURCE_LOCAL:
 				(!strcmp(source, "both"))?   LLDP_DOT3_POWER_SOURCE_BOTH:
 				LLDP_DOT3_POWER_SOURCE_UNKNOWN)) == NULL ||
-/*
-			    (what = "dual mode", lldpctl_atom_set_int(dot3_power,
-				lldpctl_k_dot3_power_dualMode,
-				(!strcmp(pid4, "supportPDorPSE"))?LLDP_DOT3_POWER_DUAL_MODE_SUP:
-				LLDP_DOT3_POWER_DUAL_MODE_UNSUP)) == NULL ||
-*/
 			    (what = "PD 4 PID", cmdenv_get(env, "pid4")?
 				lldpctl_atom_set_str(dot3_power,
-				    lldpctl_k_dot3_power_dualMode,
+				    lldpctl_k_dot3_power_4pid,
 				    cmdenv_get(env, "pid4")):
 				lldpctl_atom_set_int(dot3_power,
-				    lldpctl_k_dot3_power_dualMode, 0)) == NULL ||
-/*
-			    (what = "dual mode", lldpctl_atom_set_int(dot3_power,
-				lldpctl_k_dot3_power_dualMode,
-*/
+				    lldpctl_k_dot3_power_4pid, 0)) == NULL ||
 			    (what = "priority", lldpctl_atom_set_str(dot3_power,
 				lldpctl_k_dot3_power_priority,
 				cmdenv_get(env, "priority"))) == NULL ||
@@ -214,7 +203,6 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				const char *classExt = cmdenv_get(env, "classExt");
 				const char *typebt = cmdenv_get(env, "typebt");
 				const char *pdLoad = cmdenv_get(env, "pdLoad");
-			//	const char *pseMaxPower = cmdenv_get(env, "pseMaxPower");
 				const char *autoclassSupport = cmdenv_get(env, "autoclassSupport");
 				const char *autoclassComplete = cmdenv_get(env, "autoclassComplete");
 				const char *autoclassRequest = cmdenv_get(env, "autoclassRequest");
@@ -255,26 +243,6 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					(!strcmp(pairsExt, "signal"))?	LLDP_DOT3_POWERPAIRS_PSE_A:
 					(!strcmp(pairsExt, "spare"))?	LLDP_DOT3_POWERPAIRS_PSE_B:
 					0):1) == NULL ||
-/*
-				    (what = "power class pair A", cmdenv_get(env, "aClass")?
-					lldpctl_atom_set_str(dot3_power,
-					    lldpctl_k_dot3_power_dualSigAClass,
-					    cmdenv_get(env, "aClass")):
-					lldpctl_atom_set_int(dot3_power,
-					    lldpctl_k_dot3_power_dualSigAClass, 0)) == NULL ||
-				    (what = "power class pair B", cmdenv_get(env, "bClass")?
-					lldpctl_atom_set_str(dot3_power,
-					    lldpctl_k_dot3_power_dualSigBClass,
-					    cmdenv_get(env, "bClass")):
-					lldpctl_atom_set_int(dot3_power,
-					    lldpctl_k_dot3_power_dualSigBClass, 0)) == NULL ||
-				    (what = "power class extension", cmdenv_get(env, "classExt")?
-					lldpctl_atom_set_str(dot3_power,
-					    lldpctl_k_dot3_power_classExt,
-					    cmdenv_get(env, "classExt")):
-					lldpctl_atom_set_int(dot3_power,
-					    lldpctl_k_dot3_power_classExt, 0)) == NULL ||
-*/
 				    (what = "power class pair A", (aClass) ? lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_dualSigAClass,
 					(!strcmp(aClass, "1"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_1:
@@ -317,29 +285,12 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					(!strcmp(pdLoad, "isolated"))?		LLDP_DOT3_POWER_PD_LOAD_AB_ISOLATION_TRUE:
 					(!strcmp(pdLoad, "not-isolated"))?	LLDP_DOT3_POWER_PD_LOAD_AB_ISOLATION_FALSE:
 					0):1) == NULL ||
-/*
-				    (what = "bt power type extension", lldpctl_atom_set_str(dot3_power,
-					lldpctl_k_dot3_power_powerTypeExt,
-					cmdenv_get(env, "typebt"))) == NULL ||
-				    (what = "pd load", lldpctl_atom_set_str(dot3_power,
-					lldpctl_k_dot3_power_pdLoad,
-					cmdenv_get(env, "pdLoad"))) == NULL ||
-*/
 				/*PSE max power field*/
 				    (what = "pse max available power", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_pseMaxPower,
 					cmdenv_get(env, "pseMaxPower"))
 					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == NULL || /*make non-mandatory for PDs*/
 				/*autoclass field*/
-/*These are the new ones I was writing, but thinking the old ones below are actually good.
-				    (what = "auto class support", lldpctl_atom_set_int(dot3_power,
-					lldpctl_k_dot3_power_autoclassSupport,
-					(!strcmp(autoclassComplete, 
-				    (what = "autoclass complete", lldpctl_atom_set_int(dot2_power,
-					lldpctl_k_dot3_power_autoclassCompleted,
-				    (what = "autoclass request", lldpctl_atom_set_int(dot3_power,
-					lldpctl_k_dot3_power_autoclassRequest,
-*/
 				    (what = "auto class support", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_autoclassSupport,
 					cmdenv_get(env, "autoclassSupport"))
@@ -348,20 +299,9 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					lldpctl_k_dot3_power_autoclassCompleted,
 					cmdenv_get(env, "autoclassCompleted"))
 					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == NULL || /*make non-mandatory for PDs*/
-/*
-				    (what = "autoclass request", lldpctl_atom_set_str(dot3_power,
-					lldpctl_k_dot3_power_autoclassRequest,
-					cmdenv_get(env, "autoclassRequest"))
-					|| !strcmp("pse", cmdenv_get(env, "device-type"))) == NULL ||*/ /*make non-mandatory for PSEs*/
 		    		    (what = "autoclass request flag", lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_autoclassRequest,
 					cmdenv_get(env, "autoclassRequest")?1:0)) == NULL ||
-				/*powerdown field*/
-/*
-				    (what = "power down request", lldpctl_atom_set_str(dot3_power,
-					lldpctl_k_dot3_power_powerDownRequest,
-					cmdenv_get(env, "powerDownRequest"))) == NULL ||
-*/
 		    		    (what = "power down request flag", lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_powerDownRequest,
 					cmdenv_get(env, "powerDownRequest")?LLDP_DOT3_POWER_POWERDOWN_REQUEST:0)) == NULL ||
@@ -432,36 +372,6 @@ cmd_check_typebt_and_pse_but_no(struct cmd_env *env, void *arg)
 	if (devicetype == NULL) {return 0;}
 	return cmd_check_typebt_but_no(env, arg) && !strcmp(devicetype, "pse");
 }
-/*check that PD 4PID field is set, (called pid4) indicating 802.3bt extension*/
-//static int
-//cmd_check_pid4(struct cmd_env *env, void *arg)
-//{
-//	return !!cmdenv_get(env, "pid4");
-//}
-///*check that PD 4PID field is true and check that we are advertising being a PSE*/
-//static int
-//cmd_check_pid4_and_is_pse(struct cmd_env *env, void *arg)
-//{
-//	const char *devicetype = cmdenv_get(env, "device-type");
-//	if (devicetype == NULL) {return 0;}
-//	return (!!cmdenv_get(env, "pid4")) && !strcmp(devicetype, "pse");
-//}
-///*check that PD 4PID field is true and check that we are advertising being a PD*/
-//static int
-//cmd_check_pid4_and_is_pd(struct cmd_env *env, void *arg)
-//{
-//	const char *devicetype = cmdenv_get(env, "device-type");
-//	if (devicetype == NULL) {return 0;}
-//	return (!!cmdenv_get(env, "pid4")) && !strcmp(devicetype, "pd");
-//}
-//static int
-//cmd_check_pid4_but_no(struct cmd_env *env, void *arg)
-//{
-//	const char *what = arg;
-//	if (!cmdenv_get(env, "pid4")) return 0;
-//	if (cmdenv_get(env, what)) return 0;
-//	return 1;
-//}
 static int
 cmd_check_type(struct cmd_env *env, const char *type)
 {
@@ -682,18 +592,10 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		cmd_check_typeat_but_no, NULL, "source");
 	register_commands_pow_source(source);
 
-	/*TODO, currently, this option must be set to be able to fill out any
-	other bt fields.  Check this is truely what the standard is saying*/
-	//TODO, make this so only need to set pid4 without saying supported,
-	//i.e. defaults to not supported unless is?
-	/* 802.3bt PD 4PID (dual mode) */
 	struct cmd_node *pid4 = commands_new(
 		configure_dot3power,
 		"pid4", "802.3bt pd supports 4 pair power",
 		cmd_check_typebt_and_pd_but_no, NULL, "pid4");
-		//TODO, need to refactor, since this is only true for PDs, thus shouldn't be a gate keeper for both :-(
-		//cmd_check_typeat_but_no_and_is_pd, NULL, "pid4");
-		//cmd_check_bt, NULL, "pid4");
 	commands_new(
 		pid4,
 		"supported", "PD supports powering of both modes simultaneously",
@@ -773,7 +675,6 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 	struct cmd_node *pdStatus = commands_new(
 		configure_dot3power,
 		"pdStatus", "what signature and pairs of PD? (Mandatory)",
-//TODO need to create check is bt and pd funct
 		cmd_check_typebt_and_pd_but_no, NULL, "pdStatus");
 	commands_new(pdStatus,
 		"dual4pair", "PD is being powered by 4-pairs, dual signature",

@@ -122,7 +122,7 @@ struct lldpd_dot3_power {
 	u_int8_t		powertype; /* If set to LLDP_DOT3_POWER_8023AT_OFF,
 					      following fields have no meaning */
 	u_int8_t		source;
-	u_int8_t		dualMode; /*802.3bt addition, TODO need to refactor to read pid4, here and everywhere*/
+	u_int8_t		pid4; /*802.3bt addition, TODO need to refactor to read pid4, here and everywhere*/
 	u_int8_t		priority;
 	u_int16_t		requested;
 	u_int16_t		allocated;
@@ -131,10 +131,6 @@ struct lldpd_dot3_power {
 	u_int16_t		requestedB;
 	u_int16_t		allocatedA;
 	u_int16_t		allocatedB;
-	/*Justification to be removed after PR:*/
-	/*Defining bitfield prevents need for bit shifting and more closely resembles standard*/
-	/*Anonymous structs and unions mean same lldpd_dot3_power.member notation
-	consistent with existing style*/
 	union {
 		u_int16_t	powerStatus;
 		struct {

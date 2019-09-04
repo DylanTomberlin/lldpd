@@ -2,7 +2,8 @@
 /*
  * Copyright (c) 2015 Vincent Bernat <vincent@bernat.im>
  *
- * Permission to use, copy, modify, and/or distribute this software for any * purpose with or without fee is hereby granted, provided that the above
+ * Permission to use, copy, modify, and/or distribute this software for any 
+ * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
@@ -65,11 +66,11 @@ static struct atom_map port_dot3_power_class_map = {
 	},
 };
 
-static struct atom_map port_dot3_power_dualMode_map = {
-	.key = lldpctl_k_dot3_power_dualMode,
+static struct atom_map port_dot3_power_4pid_map = {
+	.key = lldpctl_k_dot3_power_4pid,
 	.map = {
-		{ LLDP_DOT3_POWER_DUAL_MODE_SUP,	"supportPDorPSE"},
-		{ LLDP_DOT3_POWER_DUAL_MODE_UNSUP,	"noSupportPD" },
+		{ LLDP_DOT3_POWER_4PID_SUP,	"supportPDorPSE"},
+		{ LLDP_DOT3_POWER_4PID_SUP,	"noSupportPD" },
 		{ 0, NULL }
 	},
 };
@@ -424,11 +425,11 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 			goto bad;
 		port->p_power.source = value;
 		return atom;
-	case lldpctl_k_dot3_power_dualMode:
+	case lldpctl_k_dot3_power_4pid:
 		switch(value) {
-		case LLDP_DOT3_POWER_DUAL_MODE_SUP:
-		case LLDP_DOT3_POWER_DUAL_MODE_UNSUP:
-			port->p_power.dualMode = value;
+		case LLDP_DOT3_POWER_4PID_SUP:
+		case LLDP_DOT3_POWER_4PID_UNSUP:
+			port->p_power.pid4 = value;
 			return atom;
 		default: goto bad;
 		}
@@ -621,22 +622,15 @@ _lldpctl_atom_set_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 	case lldpctl_k_dot3_power_priority:
 		return _lldpctl_atom_set_int_dot3_power(atom, key,
 		    map_reverse_lookup(port_dot3_power_priority_map.map, value));
-	case lldpctl_k_dot3_power_dualMode:
+	case lldpctl_k_dot3_power_4pid:
 		return _lldpctl_atom_set_int_dot3_power(atom, key,
-		    map_reverse_lookup(port_dot3_power_dualMode_map.map, value));
-/*
-	case lldpctl_k_dot3_power_autoclassRequest:
-		return _lldpctl_atom_set_int_dot3_power(atom, key,
-		    map_reverse_lookup(port_dot3_power_dualMode_map.map, value));
-*/
-//TODO need to add more cases
+		    map_reverse_lookup(port_dot3_power_4pid_map.map, value));
 	default:
 		SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);
 		return NULL;
 	}
 }
 
-//TODO, make sure all of these getter setters are updated
 static struct atom_builder dot3_power =
 	{ atom_dot3_power, sizeof(struct _lldpctl_atom_dot3_power_t),
 	  .init = _lldpctl_atom_new_dot3_power,
