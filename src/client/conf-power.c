@@ -193,7 +193,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				    what, name, lldpctl_last_strerror(conn));
 				ok = 0;
 			/*802.3bt*/
-			} else if (cmdenv_get(env, "pid4")) {
+			} else if (cmdenv_get(env, "typebt")) {
 				//add cmdenv_get calls
 				const char *pdStatus = cmdenv_get(env, "pdStatus");
 				const char *pseStatus = cmdenv_get(env, "pseStatus");

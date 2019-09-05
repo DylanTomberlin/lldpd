@@ -69,8 +69,8 @@ static struct atom_map port_dot3_power_class_map = {
 static struct atom_map port_dot3_power_4pid_map = {
 	.key = lldpctl_k_dot3_power_4pid,
 	.map = {
-		{ LLDP_DOT3_POWER_4PID_SUP,	"supportPDorPSE"},
-		{ LLDP_DOT3_POWER_4PID_SUP,	"noSupportPD" },
+		{ LLDP_DOT3_POWER_4PID_SUP,	"4PID is supported by PD"},
+		{ LLDP_DOT3_POWER_4PID_UNSUP,	"4PID is not supported by PD" },
 		{ 0, NULL }
 	},
 };

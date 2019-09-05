@@ -159,23 +159,22 @@
 #define LLDP_DOT3_POWER_PRIO_HIGH	2
 #define LLDP_DOT3_POWER_PRIO_LOW	3
 
-/* Dot3 pse powering status (for 802.3bt) */
+/* Dot3 Power Status, pse powering status (for 802.3bt) */
 #define LLDP_DOT3_POWER_STATUS_PSE_2PAIR			1
 #define LLDP_DOT3_POWER_STATUS_PSE_4PAIR_SINGLE_SIGNATURE 	2
 #define LLDP_DOT3_POWER_STATUS_PSE_4PAIR_DUAL_SIGNATURE 	3
 
-/* Dot3 pd powered status (802.3bt)*/
+/* Dot3 Power Status, pd powered status (802.3bt)*/
 #define LLDP_DOT3_POWER_STATUS_PD_POWERED_SINGLE_SIGNATURE	1
 #define LLDP_DOT3_POWER_STATUS_PD_2PAIR_DUAL_SIGNATURE		2
 #define LLDP_DOT3_POWER_STATUS_PD_4PAIR_DUAL_SIGNATURE		3
 
-/* Dot3 PSE power pairs ext (802.3bt)*/
+/* Dot3 Power Status, PSE power pairs ext (802.3bt)*/
 #define LLDP_DOT3_POWERPAIRS_PSE_A	1
 #define LLDP_DOT3_POWERPAIRS_PSE_B	2
 #define LLDP_DOT3_POWERPAIRS_PSE_BOTH	3
 
-/* Dot3 Dual-signature power class ext mode A (802.3bt)*/
-
+/* Dot3 Power Status, Dual-signature power class ext mode A (802.3bt)*/
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_1		1
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_2		2
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_3		3
@@ -183,7 +182,7 @@
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_5		5
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_SINGLE_SIG_PD	7
 
-/* Dot3 Dual-signature power class ext mode B (802.3bt)*/
+/* Dot3 Power Status, Dual-signature power class ext mode B (802.3bt)*/
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_1		1
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_2		2
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_3		3
@@ -191,7 +190,7 @@
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_5		5
 #define LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_SINGLE_SIG_PD	7
 
-/* Dot3 Power class ext (802.3bt)*/
+/* Dot3 Power Status, Power class ext (802.3bt)*/
 #define LLDP_DOT3_POWER_CLASS_1			1
 #define LLDP_DOT3_POWER_CLASS_2			2
 #define LLDP_DOT3_POWER_CLASS_3			3
