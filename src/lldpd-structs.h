@@ -131,6 +131,7 @@ struct lldpd_dot3_power {
 	u_int16_t		requestedB;
 	u_int16_t		allocatedA;
 	u_int16_t		allocatedB;
+	/*
 	union {
 		u_int16_t	powerStatus;
 		struct {
@@ -142,6 +143,14 @@ struct lldpd_dot3_power {
 			u_int8_t	psePoweringStatus	: 2;
 		};
 	} ;
+	*/
+	u_int8_t	powerClassExt; // 4
+	u_int8_t	powerClassB;   // 3
+	u_int8_t	powerClassA;	// 3
+	u_int8_t	psePowerPairs;	// 2
+	u_int8_t	pdPoweredStatus;// 2
+	u_int8_t	psePoweringStatus; // 2
+	/*
 	union {
 		u_int8_t	systemSetup;
 		struct {
@@ -150,7 +159,11 @@ struct lldpd_dot3_power {
 			u_int8_t 	reserved_systemSetup	: 4;
 		};
 	};
+	*/
+	u_int8_t	pdLoad;
+	u_int8_t 	powerTypeExt;
 	u_int16_t		pseMaxAvailPower;
+	/*
 	union {
 		u_int8_t	autoClass; 
 		struct{
@@ -160,6 +173,11 @@ struct lldpd_dot3_power {
 			u_int8_t	autoclass_reserved: 5;
 		};
 	};
+	*/
+	u_int8_t	autoClass_request;
+	u_int8_t	autoClass_completed;
+	u_int8_t	pseAutoclassSupport;
+	/*
 	union {
 		u_int32_t	powerDown; 
 		struct{
@@ -167,6 +185,11 @@ struct lldpd_dot3_power {
 			u_int16_t	powerdown_request_pd : 6;
 		};
 	};
+	*/
+	u_int32_t	powerdown_time;
+	u_int8_t	powerdown_request_pd;
+
+	uint32_t	powerDownOctets;
 };
 MARSHAL(lldpd_dot3_power);
 

@@ -322,21 +322,66 @@ static int _lldp_send(struct lldpd *global,
 				goto toobig;
 		}
 		/* 802.3bt */
-		if(port->p_power.pid4) {
+		//TODO check this if statement
+		if(port->p_power.powerTypeExt) {
+			     /*buff[] is to force network order for 3 octet field. buff[2] is MSB, buff[0] is LSB*/
+			     u_int8_t buff[] = {0x0, 0x0, 0x0};
+			     buff[2] = (port->p_power.powerdown_request_pd << 1) | ((port->p_power.powerdown_time >> 17) & 0x1);
+			     buff[1] = (port->p_power.powerdown_time >> 8) & 0xff;
+			     buff[0] = (port->p_power.powerdown_time >> 0) & 0xff;
+
 			if(!(
 			     POKE_UINT16(port->p_power.requestedA) &&
 			     POKE_UINT16(port->p_power.requestedB) &&
 			     POKE_UINT16(port->p_power.allocatedA) &&
 			     POKE_UINT16(port->p_power.allocatedB) &&
-			     POKE_UINT16(port->p_power.powerStatus) &&
-			     POKE_UINT8(port->p_power.systemSetup) &&
+			     /*Power Status*/
+			     POKE_UINT16(
+				     	(port->p_power.psePoweringStatus << 14) |
+					(port->p_power.pdPoweredStatus   << 12) |
+					(port->p_power.psePowerPairs	 << 10) |
+			     		(port->p_power.powerClassA	 << 7)	|
+					(port->p_power.powerClassB	 << 4)	|
+					(port->p_power.powerClassExt	 << 0)) &&
+			     /*System Setup */
+			     POKE_UINT8(
+				     	(port->p_power.powerTypeExt	<< 1) |
+					(port->p_power.pdLoad		<< 0)) &&
 			     POKE_UINT16(port->p_power.pseMaxAvailPower) &&
-			     POKE_UINT8(port->p_power.autoClass) &&
+			     /*Autoclass*/
+			     POKE_UINT8(
+				     	(port->p_power.pseAutoclassSupport << 2) |
+					(port->p_power.autoClass_completed << 1) |
+					(port->p_power.autoClass_request   << 0)) &&
+			     /*Power Down*/
+			     POKE_UINT8(buff[0]);
+			     POKE_UINT8(buff[1]);
+			     POKE_UINT8(buff[2]);
+
+			     /*
+			     POKE_BYTES(
+					&htonl(
+						(port->p_power.powerdown_time		<< 18) |
+						(port->p_power.powerdown_request_pd	<< 0)) + 1;
+					, LLDP_DOT3_POWER_POWERDOWN_LEN)
+			     ))
+			     */
+			/*
+			     uint32_t powerDownTime;
+			     uint16_t powerDownRequest;
+			     uint8_t[2] buff;
+			     uint
+			     buff[1] = powerDownRequest | (powerDownTime >> 17 & 0x01);
+			     buff[0] = powerDownTime & 0xFF;
+			     POKE_BYTES(buff, sizeof(buff))
+			*/
 			     //TODO this is probably incorrect endianess, switch didn't read same shutdown time
 			/* power down is 3 octets long, might have issues with endianness */ 
+			     /*
 			     POKE_UINT8((port->p_power.powerDown>> 16) & 0xff) && 
 			     POKE_UINT8((port->p_power.powerDown>> 8) & 0xff) && 
 			     POKE_UINT8((port->p_power.powerDown>> 0) & 0xff))) 
+			     */
 			/* Dealing with endianness:
 			# if __BYTE_ORDER == __BIG_ENDIAN
 			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)
@@ -978,11 +1023,36 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.requestedB 	= PEEK_UINT16;
 						port->p_power.allocatedA 	= PEEK_UINT16;
 						port->p_power.allocatedB 	= PEEK_UINT16;
-						port->p_power.powerStatus 	= PEEK_UINT16;
-						port->p_power.systemSetup	= PEEK_UINT8;	
+						u_int16_t powerStatus		= PEEK_UINT16;
+						port->p_power.psePoweringStatus =
+							((powerStatus >> 14) & 0x3);
+						port->p_power.pdPoweredStatus	=
+							((powerStatus >> 12) & 0x3); 
+						port->p_power.powerPowerPairs	=
+							((powerStatus >> 10) & 0x3); 
+						port->p_power.powerClassA	=
+							((powerStatus >> 7) & 0x7); 
+						port->p_power.powerClassB	=
+							((powerStatus >> 4) & 0x7); 
+						port->p_power.powerClassExt	=
+							((powerStatus >> 0) & 0xF); 
+
+						u_int8_t systemSetup		= PEEK_UINT8;	
+						port->p_power.powerTypeExt	=
+							((systemSetup >> 1) & 0x7); 
+						port->p_power.pdLoad		=
+							((systemSetup >> 0) & 0x1);
+						
 						port->p_power.pseMaxAvailPower	= PEEK_UINT16;
-						port->p_power.autoClass		= PEEK_UINT8;
-						/*Power down is 3 octets long, possible endian bug here! */
+
+						u_int8_t autoClass		= PEEK_UINT8;
+						port->p_power.pseAutoclassSupport =
+							((autoClass >> 2) & 0x1);
+						port->p_power.autoClass_completed =
+							((autoClass >> 1) & 0x1);
+						port->p_power.autoClass_request =
+							((autoClass >> 0) & 0x1);
+						
 						port->p_power.powerDown		= PEEK_UINT8 << 16;
 						port->p_power.powerDown		|= (PEEK_UINT8 << 8);
 						port->p_power.powerDown		|= (PEEK_UINT8 << 0);
