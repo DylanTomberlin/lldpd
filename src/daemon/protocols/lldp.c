@@ -354,9 +354,9 @@ static int _lldp_send(struct lldpd *global,
 					(port->p_power.autoClass_completed << 1) |
 					(port->p_power.autoClass_request   << 0)) &&
 			     /*Power Down*/
-			     POKE_UINT8(buff[0]);
-			     POKE_UINT8(buff[1]);
-			     POKE_UINT8(buff[2]);
+			     POKE_UINT8(buff[0]) &&
+			     POKE_UINT8(buff[1]) &&
+			     POKE_UINT8(buff[2])))
 
 			     /*
 			     POKE_BYTES(
@@ -374,19 +374,6 @@ static int _lldp_send(struct lldpd *global,
 			     buff[1] = powerDownRequest | (powerDownTime >> 17 & 0x01);
 			     buff[0] = powerDownTime & 0xFF;
 			     POKE_BYTES(buff, sizeof(buff))
-			*/
-			     //TODO this is probably incorrect endianess, switch didn't read same shutdown time
-			/* power down is 3 octets long, might have issues with endianness */ 
-			     /*
-			     POKE_UINT8((port->p_power.powerDown>> 16) & 0xff) && 
-			     POKE_UINT8((port->p_power.powerDown>> 8) & 0xff) && 
-			     POKE_UINT8((port->p_power.powerDown>> 0) & 0xff))) 
-			     */
-			/* Dealing with endianness:
-			# if __BYTE_ORDER == __BIG_ENDIAN
-			     POKE_BYTES(port->p_power.powerDown, LLDP_DOT3_POWER_POWERDOWN_LEN)
-			# else
-			# if __BYTE_ORDER == __LITTLE_ENDIAN
 			*/
 				goto toobig;
 		}
@@ -1028,7 +1015,7 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 							((powerStatus >> 14) & 0x3);
 						port->p_power.pdPoweredStatus	=
 							((powerStatus >> 12) & 0x3); 
-						port->p_power.powerPowerPairs	=
+						port->p_power.psePowerPairs	=
 							((powerStatus >> 10) & 0x3); 
 						port->p_power.powerClassA	=
 							((powerStatus >> 7) & 0x7); 
@@ -1053,9 +1040,20 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.autoClass_request =
 							((autoClass >> 0) & 0x1);
 						
+						/*
 						port->p_power.powerDown		= PEEK_UINT8 << 16;
 						port->p_power.powerDown		|= (PEEK_UINT8 << 8);
 						port->p_power.powerDown		|= (PEEK_UINT8 << 0);
+						*/
+						/*u_int32_t in order to not have shifting off the end issues*/
+						u_int32_t buff[] = {0x0, 0x0, 0x0};
+						buff[0] = PEEK_UINT8;
+						buff[1] = PEEK_UINT8;
+						buff[2] = PEEK_UINT8;
+						port->p_power.powerdown_request_pd	= (buff[0] >> 6) & 0b111111;
+						port->p_power.powerdown_time		= ((buff[0] & 0b11) << 16) | 
+											  ((buff[1]) << 8) |
+											  ((buff[2]) << 0);
 					} else
 						port->p_power.powertype =
 						    LLDP_DOT3_POWER_8023AT_OFF;
