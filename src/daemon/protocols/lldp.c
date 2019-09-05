@@ -326,7 +326,7 @@ static int _lldp_send(struct lldpd *global,
 		if(port->p_power.powerTypeExt) {
 			     /*buff[] is to force network order for 3 octet field. buff[2] is MSB, buff[0] is LSB*/
 			     u_int8_t buff[] = {0x0, 0x0, 0x0};
-			     buff[2] = (port->p_power.powerdown_request_pd << 1) | ((port->p_power.powerdown_time >> 17) & 0x1);
+			     buff[2] = (port->p_power.powerdown_request_pd << 2) | ((port->p_power.powerdown_time >> 16) & 0x3);
 			     buff[1] = (port->p_power.powerdown_time >> 8) & 0xff;
 			     buff[0] = (port->p_power.powerdown_time >> 0) & 0xff;
 
