@@ -354,9 +354,9 @@ static int _lldp_send(struct lldpd *global,
 					(port->p_power.autoClass_completed << 1) |
 					(port->p_power.autoClass_request   << 0)) &&
 			     /*Power Down*/
-			     POKE_UINT8(buff[0]) &&
+			     POKE_UINT8(buff[2]) &&
 			     POKE_UINT8(buff[1]) &&
-			     POKE_UINT8(buff[2])))
+			     POKE_UINT8(buff[0])))
 
 			     /*
 			     POKE_BYTES(
