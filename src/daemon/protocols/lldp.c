@@ -358,23 +358,6 @@ static int _lldp_send(struct lldpd *global,
 			     POKE_UINT8(buff[1]) &&
 			     POKE_UINT8(buff[0])))
 
-			     /*
-			     POKE_BYTES(
-					&htonl(
-						(port->p_power.powerdown_time		<< 18) |
-						(port->p_power.powerdown_request_pd	<< 0)) + 1;
-					, LLDP_DOT3_POWER_POWERDOWN_LEN)
-			     ))
-			     */
-			/*
-			     uint32_t powerDownTime;
-			     uint16_t powerDownRequest;
-			     uint8_t[2] buff;
-			     uint
-			     buff[1] = powerDownRequest | (powerDownTime >> 17 & 0x01);
-			     buff[0] = powerDownTime & 0xFF;
-			     POKE_BYTES(buff, sizeof(buff))
-			*/
 				goto toobig;
 		}
 		//build packet

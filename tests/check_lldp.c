@@ -168,16 +168,39 @@ check_received_port_dot3(
 		sport->p_power.allocatedA);
 	ck_assert_int_eq(rport->p_power.allocatedB,
 		sport->p_power.allocatedB);
-	ck_assert_int_eq(rport->p_power.powerStatus,
-		sport->p_power.powerStatus);
-	ck_assert_int_eq(rport->p_power.systemSetup,
-		sport->p_power.systemSetup);
+	/*power status*/
+	ck_assert_int_eq(rport->p_power.powerClassExt,
+		sport->p_power.powerClassExt);
+	ck_assert_int_eq(rport->p_power.powerClassB,
+		sport->p_power.powerClassB);
+	ck_assert_int_eq(rport->p_power.powerClassA,
+		sport->p_power.powerClassA);
+	ck_assert_int_eq(rport->p_power.psePowerPairs,
+		sport->p_power.psePowerPairs);
+	ck_assert_int_eq(rport->p_power.pdPoweredStatus,
+		sport->p_power.pdPoweredStatus);
+	ck_assert_int_eq(rport->p_power.psePoweringStatus,
+		sport->p_power.psePoweringStatus);
+	/*system setup*/
+	ck_assert_int_eq(rport->p_power.pdLoad,
+		sport->p_power.pdLoad);
+	ck_assert_int_eq(rport->p_power.powerTypeExt,
+		sport->p_power.powerTypeExt);
+	/*pse max avail power*/
 	ck_assert_int_eq(rport->p_power.pseMaxAvailPower,
 		sport->p_power.pseMaxAvailPower);
-	ck_assert_int_eq(rport->p_power.autoClass,
-		sport->p_power.autoClass);
-	ck_assert_int_eq(rport->p_power.powerDown,
-		sport->p_power.powerDown);
+	/*auto class*/
+	ck_assert_int_eq(rport->p_power.autoClass_request,
+		sport->p_power.autoClass_request);
+	ck_assert_int_eq(rport->p_power.autoClass_completed,
+		sport->p_power.autoClass_completed);
+	ck_assert_int_eq(rport->p_power.pseAutoclassSupport,
+		sport->p_power.pseAutoclassSupport);
+	/*powerdown*/
+	ck_assert_int_eq(rport->p_power.powerdown_time,
+		sport->p_power.powerdown_time);
+	ck_assert_int_eq(rport->p_power.powerdown_request_pd,
+		sport->p_power.powerdown_request_pd);
 
 	/*check lldpd_dot3_measurements*/	
 	ck_assert_int_eq(rport->p_measurements.energyMeas,
@@ -500,11 +523,26 @@ START_TEST (test_send_rcv_dot3)
 	hardware.h_lport.p_power.requestedB = 0xabcd;
 	hardware.h_lport.p_power.allocatedA = 0xabcd;
 	hardware.h_lport.p_power.allocatedB = 0xabcd;
-	hardware.h_lport.p_power.powerStatus = 0xabcd;
-	hardware.h_lport.p_power.systemSetup = 0xef;
-	hardware.h_lport.p_power.pseMaxAvailPower = 0xaaaa; 
-	hardware.h_lport.p_power.autoClass =  0xee;
-	hardware.h_lport.p_power.powerDown =  0x123456;
+
+	hardware.h_lport.p_power.powerClassExt = 4;
+	hardware.h_lport.p_power.powerClassB = 3;   
+	hardware.h_lport.p_power.powerClassA = 2;
+	hardware.h_lport.p_power.psePowerPairs = LLDP_DOT3_POWER_STATUS_PSE_4PAIR_DUAL_SIGNATURE;	
+	hardware.h_lport.p_power.pdPoweredStatus = LLDP_DOT3_POWER_STATUS_PD_4PAIR_DUAL_SIGNATURE;
+	//TODO, has this been accounted for in the library consts?
+	hardware.h_lport.p_power.psePoweringStatus = 2; 
+		
+	hardware.h_lport.p_power.pdLoad = LLDP_DOT3_POWER_PD_LOAD_AB_ISOLATION_TRUE;
+	hardware.h_lport.p_power.powerTypeExt = LLDP_DOT3_POWER_TYPE_3_PD_DUAL_SIG;
+		
+	hardware.h_lport.p_power.pseMaxAvailPower = 0x222;
+		
+	hardware.h_lport.p_power.autoClass_request = LLDP_DOT3_POWER_AUTOCLASS_REQUEST_TRUE;
+	hardware.h_lport.p_power.autoClass_completed = LLDP_DOT3_POWER_AUTOCLASS_COMPLETED_TRUE;
+	hardware.h_lport.p_power.pseAutoclassSupport = LLDP_DOT3_POWER_AUTOCLASS_PSE_SUPPORT_TRUE;
+
+	hardware.h_lport.p_power.powerdown_time = 0x1234;
+	hardware.h_lport.p_power.powerdown_request_pd = LLDP_DOT3_POWER_POWERDOWN_REQUEST;
 
 	/* Populate measurement*/
 	hardware.h_lport.p_measurements.energyMeas		= 0x01234567;

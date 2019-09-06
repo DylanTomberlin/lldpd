@@ -149,8 +149,6 @@ struct lldpd_dot3_power {
 	u_int8_t	pseAutoclassSupport;
 	u_int32_t	powerdown_time;
 	u_int8_t	powerdown_request_pd;
-
-	uint32_t	powerDownOctets;
 };
 MARSHAL(lldpd_dot3_power);
 
