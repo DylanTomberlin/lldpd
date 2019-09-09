@@ -87,6 +87,7 @@ cmd_store_prio_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,
 	return cmd_store_something_env_value_and_pop2("priority", env, value);
 }
 /*check if bt tlv is single signature*/
+/*UNUSED:
 static int
 cmd_check_single_sig(struct cmd_env *env, void *arg)
 {
@@ -94,6 +95,7 @@ cmd_check_single_sig(struct cmd_env *env, void *arg)
 	if (typebt == NULL) {return 0;}
 	return !strcmp(typebt, "3single") || !strcmp(typebt, "4single");
 }
+*/
 /*check if bt tlve is dual signature*/
 static int
 cmd_check_dual_sig(struct cmd_env *env, void *arg)
@@ -159,7 +161,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 		} else if (cmdenv_get(env, "typeat")) {
 			int typeat = cmdenv_get(env, "typeat")[0] - '0';
 			const char *source = cmdenv_get(env, "source");
-			const char *pid4 = cmdenv_get(env, "pid4");
+			//const char *pid4 = cmdenv_get(env, "pid4");
 			if (
 			    (what = "802.3at type", lldpctl_atom_set_int(dot3_power,
 				    lldpctl_k_dot3_power_type,
@@ -203,27 +205,27 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				const char *classExt = cmdenv_get(env, "classExt");
 				const char *typebt = cmdenv_get(env, "typebt");
 				const char *pdLoad = cmdenv_get(env, "pdLoad");
-				const char *autoclassSupport = cmdenv_get(env, "autoclassSupport");
-				const char *autoclassComplete = cmdenv_get(env, "autoclassComplete");
-				const char *autoclassRequest = cmdenv_get(env, "autoclassRequest");
-				const char *powerDownRequest = cmdenv_get(env, "powerDownRequest");
+				//const char *autoclassSupport = cmdenv_get(env, "autoclassSupport");
+				//const char *autoclassComplete = cmdenv_get(env, "autoclassComplete");
+				//const char *autoclassRequest = cmdenv_get(env, "autoclassRequest");
+				//const char *powerDownRequest = cmdenv_get(env, "powerDownRequest");
 				if(
 				    (what = "requested power A", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_requestedA,
 					cmdenv_get(env, "aRequested"))
-					|| !cmd_check_dual_sig(env,NULL)) == NULL ||
+					|| !cmd_check_dual_sig(env,NULL)) == 0 ||
 				    (what = "requested power B", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_requestedB,
 					cmdenv_get(env, "bRequested"))
-					|| !cmd_check_dual_sig(env,NULL)) == NULL ||
+					|| !cmd_check_dual_sig(env,NULL)) == 0 ||
 				    (what = "allocated power A", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_allocatedA,
 					cmdenv_get(env, "aAllocated"))
-					|| !cmd_check_dual_sig(env,NULL)) == NULL ||
+					|| !cmd_check_dual_sig(env,NULL)) == 0 ||
 				    (what = "allocated power B", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_allocatedB,
 					cmdenv_get(env, "bAllocated"))
-					|| !cmd_check_dual_sig(env,NULL)) == NULL ||
+					|| !cmd_check_dual_sig(env,NULL)) == 0 ||
 				/*Power Status field*/
 				    (what = "PD status", (pdStatus) ? lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_pdStatus,
@@ -289,16 +291,16 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				    (what = "pse max available power", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_pseMaxPower,
 					cmdenv_get(env, "pseMaxPower"))
-					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == NULL || /*make non-mandatory for PDs*/
+					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == 0 || /*make non-mandatory for PDs*/
 				/*autoclass field*/
 				    (what = "auto class support", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_autoclassSupport,
 					cmdenv_get(env, "autoclassSupport"))
-					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == NULL || /*make non-mandatory for PDs*/
+					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == 0 || /*make non-mandatory for PDs*/
 				    (what = "autoclass complete", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_autoclassCompleted,
 					cmdenv_get(env, "autoclassCompleted"))
-					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == NULL || /*make non-mandatory for PDs*/
+					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == 0 || /*make non-mandatory for PDs*/
 		    		    (what = "autoclass request flag", lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_autoclassRequest,
 					cmdenv_get(env, "autoclassRequest")?1:0)) == NULL ||
