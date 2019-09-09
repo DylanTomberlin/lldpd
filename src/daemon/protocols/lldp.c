@@ -324,40 +324,35 @@ static int _lldp_send(struct lldpd *global,
 		/* 802.3bt */
 		//TODO check this if statement
 		if(port->p_power.powerTypeExt) {
-			     /*buff[] is to force network order for 3 octet field. buff[2] is MSB, buff[0] is LSB*/
-			     u_int8_t buff[] = {0x0, 0x0, 0x0};
-			     buff[2] = (port->p_power.powerdown_request_pd << 2) | ((port->p_power.powerdown_time >> 16) & 0x3);
-			     buff[1] = (port->p_power.powerdown_time >> 8) & 0xff;
-			     buff[0] = (port->p_power.powerdown_time >> 0) & 0xff;
-
+			uint32_t powerDown = htonl(port->p_power.powerdown_time);
+			uint8_t* pPowerDown = (uint8_t*)&powerDown;
+			pPowerDown++;
+			pPowerDown[0] |= port->p_power.powerdown_request_pd << 2;
 			if(!(
-			     POKE_UINT16(port->p_power.requestedA) &&
-			     POKE_UINT16(port->p_power.requestedB) &&
-			     POKE_UINT16(port->p_power.allocatedA) &&
-			     POKE_UINT16(port->p_power.allocatedB) &&
-			     /*Power Status*/
-			     POKE_UINT16(
-				     	(port->p_power.psePoweringStatus << 14) |
+				 POKE_UINT16(port->p_power.requestedA) &&
+				 POKE_UINT16(port->p_power.requestedB) &&
+				 POKE_UINT16(port->p_power.allocatedA) &&
+				 POKE_UINT16(port->p_power.allocatedB) &&
+				 /*Power Status*/
+				 POKE_UINT16(
+					(port->p_power.psePoweringStatus << 14) |
 					(port->p_power.pdPoweredStatus   << 12) |
 					(port->p_power.psePowerPairs	 << 10) |
-			     		(port->p_power.powerClassA	 << 7)	|
-					(port->p_power.powerClassB	 << 4)	|
-					(port->p_power.powerClassExt	 << 0)) &&
-			     /*System Setup */
-			     POKE_UINT8(
-				     	(port->p_power.powerTypeExt	<< 1) |
+					(port->p_power.powerClassA		 << 7) |
+					(port->p_power.powerClassB		 << 4) |
+					(port->p_power.powerClassExt 	 << 0)) &&
+				/*System Setup */
+				POKE_UINT8(
+					(port->p_power.powerTypeExt	<< 1) |
 					(port->p_power.pdLoad		<< 0)) &&
-			     POKE_UINT16(port->p_power.pseMaxAvailPower) &&
-			     /*Autoclass*/
-			     POKE_UINT8(
-				     	(port->p_power.pseAutoclassSupport << 2) |
+				POKE_UINT16(port->p_power.pseMaxAvailPower) &&
+				/*Autoclass*/
+				POKE_UINT8(
+					(port->p_power.pseAutoclassSupport << 2) |
 					(port->p_power.autoClass_completed << 1) |
 					(port->p_power.autoClass_request   << 0)) &&
-			     /*Power Down*/
-			     POKE_UINT8(buff[2]) &&
-			     POKE_UINT8(buff[1]) &&
-			     POKE_UINT8(buff[0])))
-
+				/*Power Down*/
+				POKE_BYTES(pPowerDown, 3)))
 				goto toobig;
 		}
 		//build packet
@@ -985,10 +980,11 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						    LLDP_DOT3_POWER_8023AT_TYPE2;
 						port->p_power.requested = PEEK_UINT16;
 						port->p_power.allocated = PEEK_UINT16;
-					} 
+					} else
+						port->p_power.powertype = LLDP_DOT3_POWER_8023AT_OFF;
+
 					/* 802.3bt */
 					if (tlv_size >= 29) {
-						/* Is this logic covered by using unions? */
 						port->p_power.requestedA	= PEEK_UINT16;
 						port->p_power.requestedB 	= PEEK_UINT16;
 						port->p_power.allocatedA 	= PEEK_UINT16;
@@ -1015,7 +1011,7 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						
 						port->p_power.pseMaxAvailPower	= PEEK_UINT16;
 
-						u_int8_t autoClass		= PEEK_UINT8;
+						u_int8_t autoClass = PEEK_UINT8;
 						port->p_power.pseAutoclassSupport =
 							((autoClass >> 2) & 0x1);
 						port->p_power.autoClass_completed =
@@ -1023,23 +1019,14 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.autoClass_request =
 							((autoClass >> 0) & 0x1);
 						
-						/*
-						port->p_power.powerDown		= PEEK_UINT8 << 16;
-						port->p_power.powerDown		|= (PEEK_UINT8 << 8);
-						port->p_power.powerDown		|= (PEEK_UINT8 << 0);
-						*/
-						/*u_int32_t in order to not have shifting off the end issues*/
-						u_int32_t buff[] = {0x0, 0x0, 0x0};
-						buff[0] = PEEK_UINT8;
-						buff[1] = PEEK_UINT8;
-						buff[2] = PEEK_UINT8;
-						port->p_power.powerdown_request_pd	= (buff[0] >> 6) & 0b111111;
-						port->p_power.powerdown_time		= ((buff[0] & 0b11) << 16) | 
-											  ((buff[1]) << 8) |
-											  ((buff[2]) << 0);
-					} else
-						port->p_power.powertype =
-						    LLDP_DOT3_POWER_8023AT_OFF;
+						// Power Down field is 3 octets, but need buff of 4 for
+						// ntohl, so leave MSB buff[0] as empty.
+						uint8_t buff[4] = { 0x00, 0x00, 0x00, 0x00 };
+						PEEK_BYTES(buff + 1, 3);
+						port->p_power.powerdown_request_pd = (buff[1] >> 2) & 0x3F;
+						buff[1] &= 0x03;
+						port->p_power.powerdown_time = ntohl(*(uint32_t*)buff);
+					}
 					break;
 				case LLDP_TLV_DOT3_MEASURE:
 					CHECK_TLV_SIZE(26, "Measurements");
