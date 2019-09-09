@@ -86,6 +86,7 @@ static struct atom_map port_dot3_power_priority_map = {
 	},
 };
 
+/*
 static struct atom_map port_dot3_power_pseStatus_map = {
 	.key = lldpctl_k_dot3_power_pseStatus ,
 	.map = {
@@ -115,6 +116,7 @@ static struct atom_map port_dot3_power_pairsExt_map = {
 		{ 0, NULL },
 	},
 };
+*/
 
 static struct atom_map port_dot3_power_dualSigAClass_map = {
 	.key = lldpctl_k_dot3_power_dualSigAClass ,
@@ -182,6 +184,7 @@ static struct atom_map port_dot3_power_pdLoad_map = {
 	},
 };
 
+/*
 static struct atom_map port_dot3_power_autoclassSupport_map = {
 	.key = lldpctl_k_dot3_power_autoclassSupport ,
 	.map = {
@@ -216,6 +219,7 @@ static struct atom_map port_dot3_power_powerDownRequest_map = {
 		{ 0, NULL },
 	},
 };
+*/
 
 /*Registering maps allows them to be used in conf-power.c in the register commands functions*/
 //TODO, does priority matter? For debugging on heartland, try changing priorities
