@@ -161,7 +161,8 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 		} else if (cmdenv_get(env, "typeat")) {
 			int typeat = cmdenv_get(env, "typeat")[0] - '0';
 			const char *source = cmdenv_get(env, "source");
-			//const char *pid4 = cmdenv_get(env, "pid4");
+			/*set typebt to off (non-zero off value) until is properly set by bt section below*/
+			lldpctl_atom_set_int(dot3_power, lldpctl_k_dot3_power_powerTypeExt, LLDP_DOT3_POWER_TYPE_BTOFF);
 			if (
 			    (what = "802.3at type", lldpctl_atom_set_int(dot3_power,
 				    lldpctl_k_dot3_power_type,
@@ -196,7 +197,6 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				ok = 0;
 			/*802.3bt*/
 			} else if (cmdenv_get(env, "typebt")) {
-				//add cmdenv_get calls
 				const char *pdStatus = cmdenv_get(env, "pdStatus");
 				const char *pseStatus = cmdenv_get(env, "pseStatus");
 				const char *pairsExt = cmdenv_get(env, "pairsExt");
@@ -277,7 +277,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					(!strcmp(typebt, "3dual"))?		LLDP_DOT3_POWER_TYPE_3_PD_DUAL_SIG:
 					(!strcmp(typebt, "4single"))?		LLDP_DOT3_POWER_TYPE_4_PD_SINGLE_SIG:
 					(!strcmp(typebt, "4dual"))?		LLDP_DOT3_POWER_TYPE_4_PD_DUAL_SIG:
-					0) == NULL) ||
+					LLDP_DOT3_POWER_TYPE_BTOFF) == NULL) ||
 					
 				    (what = "pd load", pdLoad != NULL && lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_pdLoad,
@@ -326,8 +326,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 			} else
 				log_info("lldpctl", "LLDP Dot3 power has been set for port %s",
 				    name);
-		}
-
+		} 
 		lldpctl_atom_dec_ref(dot3_power);
 	}//end while
 	return 1;

@@ -547,6 +547,10 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 		case LLDP_DOT3_POWER_TYPE_4_PD_DUAL_SIG:
 			port->p_power.powerTypeExt = value;
 			return atom;
+		case LLDP_DOT3_POWER_TYPE_BTOFF:
+			/*Caution, this isn't a value we actually want to send*/
+			port->p_power.powerTypeExt = value;
+			return atom;
 		default: goto bad;
 		}
 	case lldpctl_k_dot3_power_pdLoad:

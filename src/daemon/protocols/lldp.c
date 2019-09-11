@@ -1026,6 +1026,8 @@ lldp_decode(struct lldpd *cfg, char *frame, int s,
 						port->p_power.powerdown_request_pd = (buff[1] >> 2) & 0x3F;
 						buff[1] &= 0x03;
 						port->p_power.powerdown_time = ntohl(*(uint32_t*)buff);
+					} else {
+						port->p_power.powerTypeExt = LLDP_DOT3_POWER_TYPE_BTOFF;
 					}
 					break;
 				case LLDP_TLV_DOT3_MEASURE:

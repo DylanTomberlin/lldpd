@@ -467,6 +467,35 @@ display_port(struct writer *w, lldpctl_atom_t *port, int details)
 				tag_data(w, lldpctl_atom_get_str(dot3_power,
 					lldpctl_k_dot3_power_allocated));
 				tag_end(w);
+				
+				/*802.3bt */
+				if(lldpctl_atom_get_int(dot3_power,
+					lldpctl_k_dot3_power_powerTypeExt) != LLDP_DOT3_POWER_TYPE_BTOFF){
+					tag_start(w, "pid4", "4PID");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_4pid));
+					tag_end(w);
+
+					tag_start(w, "aRequested", "placeholder");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_requestedA));
+					tag_end(w);
+
+					tag_start(w, "bRequested", "placeholder");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_requestedB));
+					tag_end(w);
+
+					tag_start(w, "aAllocated", "placeholder");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedA));
+					tag_end(w);
+
+					tag_start(w, "bAllocated", "placeholder");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+				}
 			}
 
 			tag_end(w);

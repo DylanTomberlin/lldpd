@@ -206,7 +206,7 @@
 #define LLDP_DOT3_POWER_PD_LOAD_AB_ISOLATION_FALSE	0 /*dual or single signature*/
 
 /* Dot3 System Setup, Power type ext (802.3bt)*/
-#define LLDP_DOT3_POWER_TYPE_BTOFF		-1
+#define LLDP_DOT3_POWER_TYPE_BTOFF		0xFF
 #define LLDP_DOT3_POWER_TYPE_3_PSE		0
 #define LLDP_DOT3_POWER_TYPE_4_PSE		1
 #define LLDP_DOT3_POWER_TYPE_3_PD_SINGLE_SIG	2

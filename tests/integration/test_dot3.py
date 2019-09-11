@@ -40,7 +40,26 @@ class TestLldpDot3(object):
           'source': 'Primary power source',
           'priority': 'low',
           'requested': '10000',
-          'allocated': '15000'})])
+          'allocated': '15000'}),
+        ("pd supported enabled powerpairs spare class class-3 typeat 1 source "
+         "pse priority low requested 10000 allocated 15000 typebt 3dual aRequested 10000 bRequested 20000 aAllocated 10000 bAllocated 20000",
+         {'supported': 'yes',
+          'enabled': 'yes',
+          'paircontrol': 'no',
+          'device-type': 'PD',
+          'pairs': 'spare',
+          'class': 'class 3',
+          'power-type': '1',
+          'source': 'Primary power source',
+          'priority': 'low',
+          'requested': '10000',
+          'allocated': '15000',
+          'pid4': '',
+          'aRequested': '10000',
+          'bRequested': '20000',
+          'aAllocated': '10000',
+          'bAllocated': '20000',
+          })])
     def test_power(self, lldpd1, lldpd, lldpcli, namespaces,
                    command, expected):
         with namespaces(2):
