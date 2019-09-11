@@ -592,6 +592,7 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 	case lldpctl_k_dot3_power_powerDownRequest:
 		/*All values are valid, only 0x1D will power it down, everything else ignored*/
 		port->p_power.powerdown_request_pd = value;
+		return atom;
 	case lldpctl_k_dot3_power_powerDownTime:
 		/*magic number is 2^18, the number of bits available for power down time */
 		if(value < 0 || value > 262143) goto bad;
