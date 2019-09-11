@@ -276,6 +276,9 @@ _lldpctl_atom_get_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 	case lldpctl_k_dot3_power_priority:
 		return map_lookup(port_dot3_power_priority_map.map,
 		    port->p_power.priority);
+	case lldpctl_k_dot3_power_4pid:
+		return map_lookup(port_dot3_power_4pid_map.map,
+		    port->p_power.pid4);
 	default:
 		SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);
 		return NULL;
@@ -547,10 +550,11 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 		case LLDP_DOT3_POWER_TYPE_4_PD_DUAL_SIG:
 			port->p_power.powerTypeExt = value;
 			return atom;
+			/*
 		case LLDP_DOT3_POWER_TYPE_BTOFF:
-			/*Caution, this isn't a value we actually want to send*/
 			port->p_power.powerTypeExt = value;
 			return atom;
+			*/
 		default: goto bad;
 		}
 	case lldpctl_k_dot3_power_pdLoad:

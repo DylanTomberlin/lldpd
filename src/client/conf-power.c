@@ -161,6 +161,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 		} else if (cmdenv_get(env, "typeat")) {
 			int typeat = cmdenv_get(env, "typeat")[0] - '0';
 			const char *source = cmdenv_get(env, "source");
+			const char *pid4 = cmdenv_get(env, "pid4");
 			/*set typebt to off (non-zero off value) until is properly set by bt section below*/
 			lldpctl_atom_set_int(dot3_power, lldpctl_k_dot3_power_powerTypeExt, LLDP_DOT3_POWER_TYPE_BTOFF);
 			if (
@@ -175,12 +176,10 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				(!strcmp(source, "local"))?  LLDP_DOT3_POWER_SOURCE_LOCAL:
 				(!strcmp(source, "both"))?   LLDP_DOT3_POWER_SOURCE_BOTH:
 				LLDP_DOT3_POWER_SOURCE_UNKNOWN)) == NULL ||
-			    (what = "PD 4 PID", cmdenv_get(env, "pid4")?
-				lldpctl_atom_set_str(dot3_power,
-				    lldpctl_k_dot3_power_4pid,
-				    cmdenv_get(env, "pid4")):
-				lldpctl_atom_set_int(dot3_power,
-				    lldpctl_k_dot3_power_4pid, 0)) == NULL ||
+			    (what = "PD 4 PID", pid4 != NULL && lldpctl_atom_set_int(dot3_power,
+				lldpctl_k_dot3_power_4pid,
+			        (!strcmp(pid4, "supported"))	? LLDP_DOT3_POWER_4PID_SUP:
+				LLDP_DOT3_POWER_4PID_UNSUP) == NULL) ||
 			    (what = "priority", lldpctl_atom_set_str(dot3_power,
 				lldpctl_k_dot3_power_priority,
 				cmdenv_get(env, "priority"))) == NULL ||
