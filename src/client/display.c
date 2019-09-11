@@ -476,22 +476,92 @@ display_port(struct writer *w, lldpctl_atom_t *port, int details)
 						lldpctl_k_dot3_power_4pid));
 					tag_end(w);
 
-					tag_start(w, "aRequested", "placeholder");
+					tag_start(w, "aRequested", "PD Requested power value for alternative A");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
 						lldpctl_k_dot3_power_requestedA));
 					tag_end(w);
 
-					tag_start(w, "bRequested", "placeholder");
+					tag_start(w, "bRequested", "PD Requested power value for alternative B");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
 						lldpctl_k_dot3_power_requestedB));
 					tag_end(w);
 
-					tag_start(w, "aAllocated", "placeholder");
+					tag_start(w, "aAllocated", "PSE Allocated power value for alternative A");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
 						lldpctl_k_dot3_power_allocatedA));
 					tag_end(w);
 
-					tag_start(w, "bAllocated", "placeholder");
+					tag_start(w, "bAllocated", "PSE Allocated Power value for alternative B");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "pseStatus", "PSE powering status");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "pdStatus", "PD powered status");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "pairsExt", "PSE power pairs ext");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "aClass", "Dual-signature power Class ext Mode A");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "bClass", "Dual-signature power Class ext Mode B");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "classExt", "Power Class ext");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "typebt", "Power Type ext");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "pdLoad", "PD Load");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "pseMaxPower", "PSE maximum available power value");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "autoclassSupport", "PSE Autoclass support");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "autoclassComplete", "Autoclass completed");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "autoclassRequest", "Autoclass request");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "powerDownRequest", "Power down request");
+					tag_data(w, lldpctl_atom_get_str(dot3_power,
+						lldpctl_k_dot3_power_allocatedB));
+					tag_end(w);
+
+					tag_start(w, "powerDownTime", "Power down time");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
 						lldpctl_k_dot3_power_allocatedB));
 					tag_end(w);
