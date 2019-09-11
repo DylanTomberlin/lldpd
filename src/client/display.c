@@ -498,72 +498,72 @@ display_port(struct writer *w, lldpctl_atom_t *port, int details)
 
 					tag_start(w, "pseStatus", "PSE powering status");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_pseStatus));
 					tag_end(w);
 
 					tag_start(w, "pdStatus", "PD powered status");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_pdStatus));
 					tag_end(w);
 
 					tag_start(w, "pairsExt", "PSE power pairs ext");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_pairsExt));
 					tag_end(w);
 
 					tag_start(w, "aClass", "Dual-signature power Class ext Mode A");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_dualSigAClass));
 					tag_end(w);
 
 					tag_start(w, "bClass", "Dual-signature power Class ext Mode B");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_dualSigBClass));
 					tag_end(w);
 
 					tag_start(w, "classExt", "Power Class ext");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_classExt));
 					tag_end(w);
 
 					tag_start(w, "typebt", "Power Type ext");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_powerTypeExt));
 					tag_end(w);
 
 					tag_start(w, "pdLoad", "PD Load");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_pdLoad));
 					tag_end(w);
 
 					tag_start(w, "pseMaxPower", "PSE maximum available power value");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_pseMaxPower));
 					tag_end(w);
 
 					tag_start(w, "autoclassSupport", "PSE Autoclass support");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_autoclassSupport));
 					tag_end(w);
 
 					tag_start(w, "autoclassComplete", "Autoclass completed");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_autoclassCompleted));
 					tag_end(w);
 
 					tag_start(w, "autoclassRequest", "Autoclass request");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_autoclassRequest));
 					tag_end(w);
 
 					tag_start(w, "powerDownRequest", "Power down request");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_powerDownRequest));
 					tag_end(w);
 
 					tag_start(w, "powerDownTime", "Power down time");
 					tag_data(w, lldpctl_atom_get_str(dot3_power,
-						lldpctl_k_dot3_power_allocatedB));
+						lldpctl_k_dot3_power_powerDownTime));
 					tag_end(w);
 				}
 			}
