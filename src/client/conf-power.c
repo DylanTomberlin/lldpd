@@ -86,16 +86,30 @@ cmd_store_prio_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,
 {
 	return cmd_store_something_env_value_and_pop2("priority", env, value);
 }
-/*check if bt tlv is single signature*/
-/*UNUSED:
 static int
-cmd_check_single_sig(struct cmd_env *env, void *arg)
+cmd_store_aClass_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,
+    struct cmd_env *env, void *value)
 {
-	const char *typebt = cmdenv_get(env, "typebt");
-	if (typebt == NULL) {return 0;}
-	return !strcmp(typebt, "3single") || !strcmp(typebt, "4single");
+	return cmd_store_something_env_value_and_pop2("aClass", env, value);
 }
-*/
+static int
+cmd_store_bClass_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,
+    struct cmd_env *env, void *value)
+{
+	return cmd_store_something_env_value_and_pop2("bClass", env, value);
+}
+static int
+cmd_store_classExt_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,
+    struct cmd_env *env, void *value)
+{
+	return cmd_store_something_env_value_and_pop2("classExt", env, value);
+}
+static int
+cmd_store_pdLoad_env_value_and_pop2(struct lldpctl_conn_t *conn, struct writer *w,
+    struct cmd_env *env, void *value)
+{
+	return cmd_store_something_env_value_and_pop2("pdLoad", env, value);
+}
 /*check if bt tlve is dual signature*/
 static int
 cmd_check_dual_sig(struct cmd_env *env, void *arg)
@@ -241,6 +255,17 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					(!strcmp(pairsExt, "signal"))?	LLDP_DOT3_POWERPAIRS_PSE_A:
 					(!strcmp(pairsExt, "spare"))?	LLDP_DOT3_POWERPAIRS_PSE_B:
 					0) == NULL) ||
+				    (what = "power class pair A", aClass ?
+					lldpctl_atom_set_str(dot3_power, lldpctl_k_dot3_power_dualSigAClass, aClass) :
+					/*Should this default to LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_SINGLE_SIG_PD?*/
+					lldpctl_atom_set_int(dot3_power, lldpctl_k_dot3_power_dualSigAClass,
+					LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_RESERVED)) == NULL ||
+				    (what = "power class pair B", bClass ?
+					lldpctl_atom_set_str(dot3_power, lldpctl_k_dot3_power_dualSigBClass, bClass) :
+					/*Should this default to LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_SINGLE_SIG_PD?*/
+					lldpctl_atom_set_int(dot3_power, lldpctl_k_dot3_power_dualSigBClass,
+					LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_RESERVED)) == NULL ||
+				    /*
 				    (what = "power class pair A", aClass != NULL && lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_dualSigAClass,
 					(!strcmp(aClass, "1"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_1:
@@ -257,17 +282,12 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					(!strcmp(bClass, "4"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_4:
 					(!strcmp(bClass, "5"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_5:
 					0) == NULL) ||
-				    (what = "power class extension", classExt != NULL && lldpctl_atom_set_int(dot3_power,
-					lldpctl_k_dot3_power_classExt,
-					(!strcmp(classExt, "1"))?		LLDP_DOT3_POWER_CLASS_1:
-					(!strcmp(classExt, "2"))?		LLDP_DOT3_POWER_CLASS_2:
-					(!strcmp(classExt, "3"))?		LLDP_DOT3_POWER_CLASS_3:
-					(!strcmp(classExt, "4"))?		LLDP_DOT3_POWER_CLASS_4:
-					(!strcmp(classExt, "5"))?		LLDP_DOT3_POWER_CLASS_5:
-					(!strcmp(classExt, "6"))?		LLDP_DOT3_POWER_CLASS_6:
-					(!strcmp(classExt, "7"))?		LLDP_DOT3_POWER_CLASS_7:
-					(!strcmp(classExt, "8"))?		LLDP_DOT3_POWER_CLASS_8:
-					0) == NULL) ||
+					*/
+				    (what = "power class extension", classExt ?
+					lldpctl_atom_set_str(dot3_power, lldpctl_k_dot3_power_classExt, classExt) :
+					/*Should this default to LLDP_DOT3_POWER_CLASS_DUAL_SIG_PD when no commandline arg?*/
+					lldpctl_atom_set_int(dot3_power, lldpctl_k_dot3_power_classExt,
+					LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_RESERVED)) == NULL ||
 
 				/*system setup field*/
 				    (what = "bt power type extension", typebt != NULL && lldpctl_atom_set_int(dot3_power,
@@ -713,7 +733,7 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 			aClass,
 			tag,
 			aClass_map->string,
-			NULL, cmd_store_class_env_value_and_pop2, aClass_map->string);
+			NULL, cmd_store_aClass_env_value_and_pop2, aClass_map->string);
 	}
 
 	/*Pair B class ext*/
@@ -731,7 +751,7 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 			bClass,
 			tag,
 			bClass_map->string,
-			NULL, cmd_store_class_env_value_and_pop2, bClass_map->string);
+			NULL, cmd_store_bClass_env_value_and_pop2, bClass_map->string);
 	}
 
 	/*802.3bt class extension*/
@@ -749,7 +769,7 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 			classExt,
 			tag,
 			classExt_map->string,
-			NULL, cmd_store_class_env_value_and_pop2, classExt_map->string);
+			NULL, cmd_store_classExt_env_value_and_pop2, classExt_map->string);
 	}
 
 	/* 802.3bt type (power type ext) */
@@ -783,10 +803,10 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		cmd_check_typebt_and_pd_but_no, NULL, "pdLoad");
 	commands_new(pdLoad,
 		"isolated", "PD is dual-signature and power demand on Mode A and Mode B are electrically isolated.",
-		NULL, cmd_store_class_env_value_and_pop2, "pdLoad");
+		NULL, cmd_store_pdLoad_env_value_and_pop2, "pdLoad");
 	commands_new(pdLoad,
 		"not-isolated", "PD is single-signature or power demand on Mode A and Mode B are not electrically isolated.",
-		NULL, cmd_store_class_env_value_and_pop2, "pdLoad");
+		NULL, cmd_store_pdLoad_env_value_and_pop2, "pdLoad");
 
 	/*PSE max avail power*/
 	commands_new(

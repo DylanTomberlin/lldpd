@@ -532,6 +532,7 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 		}
 	case lldpctl_k_dot3_power_dualSigAClass:
 		switch (value) {
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_RESERVED:
 		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_1:
 		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_2:
 		case LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_3:
@@ -544,6 +545,7 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 		}
 	case lldpctl_k_dot3_power_dualSigBClass:
 		switch (value) {
+		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_RESERVED:
 		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_1:
 		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_2:
 		case LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_3:
@@ -556,6 +558,7 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 		}
 	case lldpctl_k_dot3_power_classExt:
 		switch (value) {
+		case LLDP_DOT3_POWER_CLASS_RESERVED:
 		case LLDP_DOT3_POWER_CLASS_1:
 		case LLDP_DOT3_POWER_CLASS_2:
 		case LLDP_DOT3_POWER_CLASS_3:
@@ -663,6 +666,15 @@ _lldpctl_atom_set_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 	case lldpctl_k_dot3_power_4pid:
 		return _lldpctl_atom_set_int_dot3_power(atom, key,
 		    map_reverse_lookup(port_dot3_power_4pid_map.map, value));
+	case lldpctl_k_dot3_power_classExt:
+		return _lldpctl_atom_set_int_dot3_power(atom, key,
+		    map_reverse_lookup(port_dot3_power_classExt_map.map, value));
+	case lldpctl_k_dot3_power_dualSigAClass:
+		return _lldpctl_atom_set_int_dot3_power(atom, key,
+		    map_reverse_lookup(port_dot3_power_dualSigAClass_map.map, value));
+	case lldpctl_k_dot3_power_dualSigBClass:
+		return _lldpctl_atom_set_int_dot3_power(atom, key,
+		    map_reverse_lookup(port_dot3_power_dualSigBClass_map.map, value));
 	default:
 		SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);
 		return NULL;

@@ -41,8 +41,9 @@ class TestLldpDot3(object):
           'priority': 'low',
           'requested': '10000',
           'allocated': '15000'}),
-        ("pd supported enabled powerpairs spare class class-3 typeat 1 source "
-         "pse priority low requested 0 allocated 0 typebt 3dual aRequested 10000 bRequested 20000 aAllocated 10000 bAllocated 20000",
+        ("pd powerpairs signal typeat 2 source pse priority low requested 60000 "
+         "allocated 59000 typebt 4single pid4 supported pdStatus single classExt "
+         "class-8 pdLoad not-isolated",
          {'supported': 'yes',
           'enabled': 'yes',
           'paircontrol': 'no',
