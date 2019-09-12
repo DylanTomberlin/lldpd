@@ -86,7 +86,6 @@ static struct atom_map port_dot3_power_priority_map = {
 	},
 };
 
-/*
 static struct atom_map port_dot3_power_pseStatus_map = {
 	.key = lldpctl_k_dot3_power_pseStatus ,
 	.map = {
@@ -116,7 +115,6 @@ static struct atom_map port_dot3_power_pairsExt_map = {
 		{ 0, NULL },
 	},
 };
-*/
 
 static struct atom_map port_dot3_power_dualSigAClass_map = {
 	.key = lldpctl_k_dot3_power_dualSigAClass ,
@@ -184,7 +182,6 @@ static struct atom_map port_dot3_power_pdLoad_map = {
 	},
 };
 
-/*
 static struct atom_map port_dot3_power_autoclassSupport_map = {
 	.key = lldpctl_k_dot3_power_autoclassSupport ,
 	.map = {
@@ -219,10 +216,8 @@ static struct atom_map port_dot3_power_powerDownRequest_map = {
 		{ 0, NULL },
 	},
 };
-*/
 
-/*Registering maps allows them to be used in conf-power.c in the register commands functions*/
-//TODO, does priority matter? For debugging on heartland, try changing priorities
+/*Registering maps allows them to be used by atom getters and setters*/
 ATOM_MAP_REGISTER(port_dot3_power_pairs_map,    4);
 ATOM_MAP_REGISTER(port_dot3_power_class_map,    5);
 ATOM_MAP_REGISTER(port_dot3_power_priority_map, 6);
@@ -231,6 +226,13 @@ ATOM_MAP_REGISTER(port_dot3_power_dualSigBClass_map, 8);
 ATOM_MAP_REGISTER(port_dot3_power_classExt_map, 9);
 ATOM_MAP_REGISTER(port_dot3_power_powerTypeExt_map, 10);
 ATOM_MAP_REGISTER(port_dot3_power_pdLoad_map, 11);
+ATOM_MAP_REGISTER(port_dot3_power_pseStatus_map, 12);
+ATOM_MAP_REGISTER(port_dot3_power_pdStatus_map, 13);
+ATOM_MAP_REGISTER(port_dot3_power_pairsExt_map, 14);
+ATOM_MAP_REGISTER(port_dot3_power_autoclassSupport_map, 15);
+ATOM_MAP_REGISTER(port_dot3_power_autoclassCompleted_map, 16);
+ATOM_MAP_REGISTER(port_dot3_power_autoclassRequest_map, 17);
+ATOM_MAP_REGISTER(port_dot3_power_powerDownRequest_map, 18);
 
 static int
 _lldpctl_atom_new_dot3_power(lldpctl_atom_t *atom, va_list ap)
@@ -279,6 +281,33 @@ _lldpctl_atom_get_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 	case lldpctl_k_dot3_power_4pid:
 		return map_lookup(port_dot3_power_4pid_map.map,
 		    port->p_power.pid4);
+	case lldpctl_k_dot3_power_pseStatus:
+		return map_lookup(port_dot3_power_pseStatus_map.map,
+		    port->p_power.psePoweringStatus);
+	case lldpctl_k_dot3_power_pdStatus:
+		return map_lookup(port_dot3_power_pdStatus_map.map,
+		    port->p_power.pdPoweredStatus);
+	case lldpctl_k_dot3_power_pairsExt:
+		return map_lookup(port_dot3_power_pairsExt_map.map,
+		    port->p_power.psePowerPairs);
+	case lldpctl_k_dot3_power_classExt:
+		return map_lookup(port_dot3_power_classExt_map.map,
+		    port->p_power.powerClassExt);
+	case lldpctl_k_dot3_power_pdLoad:
+		return map_lookup(port_dot3_power_pdLoad_map.map,
+		    port->p_power.pdLoad);
+	case lldpctl_k_dot3_power_autoclassSupport:
+		return map_lookup(port_dot3_power_autoclassSupport_map.map,
+		    port->p_power.pseAutoclassSupport);
+	case lldpctl_k_dot3_power_autoclassCompleted:
+		return map_lookup(port_dot3_power_autoclassCompleted_map.map,
+		    port->p_power.autoClass_completed);
+	case lldpctl_k_dot3_power_autoclassRequest:
+		return map_lookup(port_dot3_power_autoclassRequest_map.map,
+		    port->p_power.autoClass_request);
+	case lldpctl_k_dot3_power_powerDownRequest:
+		return map_lookup(port_dot3_power_powerDownRequest_map.map,
+		    port->p_power.powerdown_request_pd);
 	default:
 		SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);
 		return NULL;
