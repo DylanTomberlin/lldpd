@@ -290,9 +290,18 @@ _lldpctl_atom_get_str_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 	case lldpctl_k_dot3_power_pairsExt:
 		return map_lookup(port_dot3_power_pairsExt_map.map,
 		    port->p_power.psePowerPairs);
+	case lldpctl_k_dot3_power_dualSigAClass:
+		return map_lookup(port_dot3_power_dualSigAClass_map.map,
+		    port->p_power.powerClassA);
+	case lldpctl_k_dot3_power_dualSigBClass:
+		return map_lookup(port_dot3_power_dualSigBClass_map.map,
+		    port->p_power.powerClassB);
 	case lldpctl_k_dot3_power_classExt:
 		return map_lookup(port_dot3_power_classExt_map.map,
 		    port->p_power.powerClassExt);
+	case lldpctl_k_dot3_power_powerTypeExt:
+		return map_lookup(port_dot3_power_powerTypeExt_map.map,
+		    port->p_power.powerTypeExt);
 	case lldpctl_k_dot3_power_pdLoad:
 		return map_lookup(port_dot3_power_pdLoad_map.map,
 		    port->p_power.pdLoad);
@@ -378,9 +387,9 @@ _lldpctl_atom_get_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 	case lldpctl_k_dot3_power_autoclassRequest:
 		return port->p_power.autoClass_request;
 	case lldpctl_k_dot3_power_powerDownRequest:
-		return port->p_power.powerdown_time;
-	case lldpctl_k_dot3_power_powerDownTime:
 		return port->p_power.powerdown_request_pd;
+	case lldpctl_k_dot3_power_powerDownTime:
+		return port->p_power.powerdown_time;
 	default:
 		return SET_ERROR(atom->conn, LLDPCTL_ERR_NOT_EXIST);
 	}
@@ -626,7 +635,7 @@ _lldpctl_atom_set_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key,
 		port->p_power.powerdown_request_pd = value;
 		return atom;
 	case lldpctl_k_dot3_power_powerDownTime:
-		/*magic number is 2^18, the number of bits available for power down time */
+		/*magic number is 2^18 - 1, 18 bits available for power down time */
 		if(value < 0 || value > 262143) goto bad;
 		port->p_power.powerdown_time = value;
 		return atom;

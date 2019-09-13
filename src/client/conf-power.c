@@ -671,12 +671,10 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 		NULL, "802.3bt power value allocated on pair B in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "bAllocated");
 
-	//TODO, do I need to make it so when this command (and others) has already been
-	//traversed in the help menu, it doesn't show up again?
 	/* PSE powering status (802.3bt) */
 	struct cmd_node *pseStatus = commands_new(
 		configure_dot3power,
-		"pseStatus", "what signature and pairs of PD is pse powering? (Mandatory)",
+		"pseStatus", "what signature and pairs of PD is pse powering?",
 		cmd_check_typebt_and_pse_but_no, NULL, "pseStatus");
 	commands_new(pseStatus,
 		"dual4pair", "4-pair powering dual-signature PD",
@@ -691,7 +689,7 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 	/*PD powered status (802.3bt)*/
 	struct cmd_node *pdStatus = commands_new(
 		configure_dot3power,
-		"pdStatus", "what signature and pairs of PD? (Mandatory)",
+		"pdStatus", "what signature and pairs of PD?",
 		cmd_check_typebt_and_pd_but_no, NULL, "pdStatus");
 	commands_new(pdStatus,
 		"dual4pair", "PD is being powered by 4-pairs, dual signature",
@@ -706,7 +704,7 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 	/*PSE power pairs ext*/
 	struct cmd_node *pairsExt = commands_new(
 		configure_dot3power,
-		"pairsExt", "Which pairs are powered? (Mandatory)",
+		"pairsExt", "Which pairs are powered?",
 		cmd_check_typebt_and_pse_but_no, NULL, "pairsExt");
 	commands_new(pairsExt,
 		"both", "Both alternatives powered",
