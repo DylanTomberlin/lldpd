@@ -379,7 +379,7 @@ _lldpctl_atom_get_int_dot3_power(lldpctl_atom_t *atom, lldpctl_key_t key)
 	case lldpctl_k_dot3_power_pdLoad:
 		return port->p_power.pdLoad;
 	case lldpctl_k_dot3_power_pseMaxPower:
-		return port->p_power.pseMaxAvailPower;
+		return port->p_power.pseMaxAvailPower * 100;
 	case lldpctl_k_dot3_power_autoclassSupport:
 		return port->p_power.pseAutoclassSupport;
 	case lldpctl_k_dot3_power_autoclassCompleted:
