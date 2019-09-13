@@ -41,10 +41,11 @@ class TestLldpDot3(object):
           'priority': 'low',
           'requested': '10000',
           'allocated': '15000'}),
-         #Single signature typebt
+         #Single signature typebt pd
         ("pd powerpairs signal class class-4 typeat 2 source pse priority low requested 60000 "
          "allocated 59000 typebt 4single pid4 supported pdStatus single classExt "
-         "class-8 aClass single bClass single pdLoad not-isolated autoclassRequest",
+         "class-8 aClass single bClass single pdLoad not-isolated autoclassRequest "
+         "aRequested 0 bRequested 0 aAllocated 0 bAllocated 0",
          {'supported': 'no',
           'enabled': 'no',
           'paircontrol': 'no',
@@ -75,12 +76,50 @@ class TestLldpDot3(object):
           'autoclassRequest':'PD requests Autoclass measurement',
           'powerDownRequest':'unknown',
           'powerDownTime':'0'}),
-         #Dual signature typebt
+         #Dual signature typebt pd
          ("pd powerpairs signal typeat 2 source pse priority low requested 0 "
          "allocated 0 typebt 4dual aRequested 20000 bRequested 30000 "
          "aAllocated 40000 bAllocated 45000 pdStatus dual4pair pid4 "
          "supported aClass class-4 bClass class-5 classExt dual-signature-pd "
          "powerDownRequest powerDownTime 130",
+         {'supported': 'no',
+          'enabled': 'no',
+          'paircontrol': 'no',
+          'device-type': 'PD',
+          'pairs': 'signal',
+          'class': 'unknown',
+          'power-type': '2',
+          'source': 'Primary power source',
+          'priority': 'low',
+          'requested': '0',
+          'allocated': '0',
+          'pid4': '4PID is supported by PD',
+          'aRequested': '20000',
+          'bRequested': '30000',
+          'aAllocated': '40000',
+          'bAllocated': '45000',
+          'pseStatus': 'unknown',
+          'pdStatus': '4-pair powered dual-signature PD',
+          'pairsExt': 'unknown',
+          'aClass': 'Class 4',
+          'bClass': 'Class 5',
+          'classExt': 'Dual-signature PD',
+          'typebt': 'Type 4 dual-signature PD',
+          'pdLoad':'PD is single-signature or dual-signature and power demand on Mode A and Mode B are not electrically isolated.',
+          'pseMaxPower':'0',
+          'autoclassSupport':'PSE does not support Autoclass',
+          'autoclassComplete':'Autoclass idle',
+          'autoclassRequest':'Autoclass idle',
+          'powerDownRequest':'PD requests a power down',
+          'powerDownTime':'130'}),
+         #Dual signature typebt pse
+         ("pse powerpairs spare class class-4 typeat 2 "
+          "source primary priority low requested 0 "
+          "allocated 0 typebt pse4 pseStatus dual4pair "
+          "pairsExt both aClass class-5 bClass class-4 "
+          "classExt dual-signature-pd pseMaxPower 80000 "
+          "autoclassSupport aRequested 20000 bRequested "
+          "30000 aAllocated 30000 bAllocated 40000",
          {'supported': 'no',
           'enabled': 'no',
           'paircontrol': 'no',

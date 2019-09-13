@@ -116,6 +116,14 @@ cmd_check_dual_sig(struct cmd_env *env, void *arg)
 {
 	const char *typebt = cmdenv_get(env, "typebt");
 	if (typebt == NULL) {return 0;}
+	return !strcmp(typebt, "pse3") || !strcmp(typebt, "pse4")
+		|| cmd_check_dual_sig_pd(env, arg);
+}
+static int
+cmd_check_dual_sig_pd(struct cmd_env *env, void *arg)
+{
+	const char *typebt = cmdenv_get(env, "typebt");
+	if (typebt == NULL) {return 0;}
 	return !strcmp(typebt, "3dual") || !strcmp(typebt, "4dual");
 }
 
@@ -213,17 +221,31 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 				const char *pdStatus = cmdenv_get(env, "pdStatus");
 				const char *pseStatus = cmdenv_get(env, "pseStatus");
 				const char *pairsExt = cmdenv_get(env, "pairsExt");
+				const char *aRequested = cmdenv_get(env, "aRequested");
+				const char *bRequested = cmdenv_get(env, "bRequested");
+				const char *aAllocated = cmdenv_get(env, "aAllocated");
+				const char *bAllocated = cmdenv_get(env, "bAllocated");
 				const char *aClass = cmdenv_get(env, "aClass");
 				const char *bClass = cmdenv_get(env, "bClass");
 				const char *classExt = cmdenv_get(env, "classExt");
 				const char *typebt = cmdenv_get(env, "typebt");
 				const char *pdLoad = cmdenv_get(env, "pdLoad");
 				const char *powerDownTime = cmdenv_get(env, "powerDownTime");
+				const char *autoclassSupport = cmdenv_get(env, "autoclassSupport");
 				if(
 				    (what = "requested power A", lldpctl_atom_set_str(dot3_power,
-					lldpctl_k_dot3_power_requestedA,
-					cmdenv_get(env, "aRequested"))
-					|| !cmd_check_dual_sig(env,NULL)) == 0 ||
+					lldpctl_k_dot3_power_requestedA, aRequested ?
+					aRequested : 0)) == 0 ||
+				    (what = "requested power B", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_requestedB, bRequested ?
+					bRequested : 0)) == 0 ||
+				    (what = "allocated power A", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_allocatedA, aAllocated ?
+					aAllocated : 0)) == 0 ||
+				    (what = "allocated power B", lldpctl_atom_set_str(dot3_power,
+					lldpctl_k_dot3_power_allocatedB, bAllocated ?
+					bAllocated : 0)) == 0 ||
+				    /*
 				    (what = "requested power B", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_requestedB,
 					cmdenv_get(env, "bRequested"))
@@ -236,6 +258,7 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					lldpctl_k_dot3_power_allocatedB,
 					cmdenv_get(env, "bAllocated"))
 					|| !cmd_check_dual_sig(env,NULL)) == 0 ||
+					*/
 				/*Power Status field*/
 				    (what = "PD status", pdStatus != NULL && lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_pdStatus,
@@ -265,24 +288,6 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					/*Should this default to LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_SINGLE_SIG_PD?*/
 					lldpctl_atom_set_int(dot3_power, lldpctl_k_dot3_power_dualSigBClass,
 					LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_RESERVED)) == NULL ||
-				    /*
-				    (what = "power class pair A", aClass != NULL && lldpctl_atom_set_int(dot3_power,
-					lldpctl_k_dot3_power_dualSigAClass,
-					(!strcmp(aClass, "1"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_1:
-					(!strcmp(aClass, "2"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_2:
-					(!strcmp(aClass, "3"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_3:
-					(!strcmp(aClass, "4"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_4:
-					(!strcmp(aClass, "5"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_A_CLASS_5:
-					0) == NULL) ||
-				    (what = "power class pair B", bClass != NULL && lldpctl_atom_set_int(dot3_power,
-					lldpctl_k_dot3_power_dualSigBClass,
-					(!strcmp(bClass, "1"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_1:
-					(!strcmp(bClass, "2"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_2:
-					(!strcmp(bClass, "3"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_3:
-					(!strcmp(bClass, "4"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_4:
-					(!strcmp(bClass, "5"))?		LLDP_DOT3_POWER_DUAL_SIGNATURE_B_CLASS_5:
-					0) == NULL) ||
-					*/
 				    (what = "power class extension", classExt ?
 					lldpctl_atom_set_str(dot3_power, lldpctl_k_dot3_power_classExt, classExt) :
 					/*Should this default to LLDP_DOT3_POWER_CLASS_DUAL_SIG_PD when no commandline arg?*/
@@ -296,6 +301,8 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					(!strcmp(typebt, "3dual"))?		LLDP_DOT3_POWER_TYPE_3_PD_DUAL_SIG:
 					(!strcmp(typebt, "4single"))?		LLDP_DOT3_POWER_TYPE_4_PD_SINGLE_SIG:
 					(!strcmp(typebt, "4dual"))?		LLDP_DOT3_POWER_TYPE_4_PD_DUAL_SIG:
+					(!strcmp(typebt, "pse3"))?		LLDP_DOT3_POWER_TYPE_3_PSE:
+					(!strcmp(typebt, "pse4"))?		LLDP_DOT3_POWER_TYPE_4_PSE:
 					LLDP_DOT3_POWER_TYPE_BTOFF) == NULL) ||
 					
 				    (what = "pd load", pdLoad != NULL && lldpctl_atom_set_int(dot3_power,
@@ -309,25 +316,39 @@ cmd_dot3power(struct lldpctl_conn_t *conn, struct writer *w,
 					cmdenv_get(env, "pseMaxPower"))
 					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == 0 || /*make non-mandatory for PDs*/
 				/*autoclass field*/
+				    (what = "auto class support", lldpctl_atom_set_int(dot3_power,
+					lldpctl_k_dot3_power_autoclassSupport, cmdenv_get(env, "autoclassSupport") ?
+					LLDP_DOT3_POWER_AUTOCLASS_PSE_SUPPORT_TRUE : 
+					LLDP_DOT3_POWER_AUTOCLASS_PSE_SUPPORT_FALSE)) == NULL ||
+				    (what = "auto class complete", lldpctl_atom_set_int(dot3_power,
+					lldpctl_k_dot3_power_autoclassCompleted, cmdenv_get(env, "autoclassComplete") ?
+					LLDP_DOT3_POWER_AUTOCLASS_COMPLETED_TRUE : 
+					LLDP_DOT3_POWER_AUTOCLASS_COMPLETED_IDLE)) == NULL ||
+				    (what = "auto class request", lldpctl_atom_set_int(dot3_power,
+					lldpctl_k_dot3_power_autoclassRequest, cmdenv_get(env, "autoclassRequest") ?
+					LLDP_DOT3_POWER_AUTOCLASS_REQUEST_TRUE : 
+					LLDP_DOT3_POWER_AUTOCLASS_REQUEST_IDLE)) == NULL ||
+
+				    /*
 				    (what = "auto class support", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_autoclassSupport,
 					cmdenv_get(env, "autoclassSupport"))
-					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == 0 || /*make non-mandatory for PDs*/
+					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == 0 || //make non-mandatory for PDs
 				    (what = "autoclass complete", lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_autoclassCompleted,
 					cmdenv_get(env, "autoclassCompleted"))
-					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == 0 || /*make non-mandatory for PDs*/
+					|| !strcmp("pd", cmdenv_get(env, "device-type"))) == 0 || //make non-mandatory for PDs
 		    		    (what = "autoclass request flag", lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_autoclassRequest,
 					cmdenv_get(env, "autoclassRequest")?1:0)) == NULL ||
+				    */
+				/*Power Down field*/
 		    		    (what = "power down request flag", lldpctl_atom_set_int(dot3_power,
 					lldpctl_k_dot3_power_powerDownRequest,
 					cmdenv_get(env, "powerDownRequest")?LLDP_DOT3_POWER_POWERDOWN_REQUEST:0)) == NULL ||
 				    (what = "power down time", powerDownTime != NULL && lldpctl_atom_set_str(dot3_power,
 					lldpctl_k_dot3_power_powerDownTime,
 					powerDownTime) == NULL)
-					/*make non-mandatory for unless powerdown request flag has been*/
-					//|| !cmdenv_get(env, "powerDownRequest")) == NULL
 				) {
 					log_warnx("lldpctl",
 					    "unable to set LLDP Dot3 power value for %s on %s. %s.",
@@ -646,28 +667,28 @@ register_commands_dot3pow(struct cmd_node *configure_dot3)
 	commands_new(
 		commands_new(configure_dot3power,
 		    "aRequested", "802.3bt dot3 power value requested on pair A (mandatory)",
-		    cmd_check_dual_sig, NULL, "aRequested"),
+		    cmd_check_dual_sig_pd, NULL, "aRequested"),
 		NULL, "802.3bt power value requested on pair A in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "aRequested");
 	/*Requested B (802.3bt)*/
 	commands_new(
 		commands_new(configure_dot3power,
 		    "bRequested", "802.3bt dot3 power value requested on pair B (mandatory)",
-		    cmd_check_dual_sig, NULL, "bRequested"),
+		    cmd_check_dual_sig_pd, NULL, "bRequested"),
 		NULL, "802.3bt power value requested on pair B in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "bRequested");
 	/*Allocated A (802.3bt)*/
 	commands_new(
 		commands_new(configure_dot3power,
 		    "aAllocated", "802.3bt dot3 power value allocated on pair A (mandatory)",
-		    cmd_check_dual_sig, NULL, "aAllocated"),
+		    cmd_check_dual_sig_pd, NULL, "aAllocated"),
 		NULL, "802.3bt power value allocated on pair A in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "aAllocated");
 	/*Allocated B (802.3bt)*/
 	commands_new(
 		commands_new(configure_dot3power,
 		    "bAllocated", "802.3bt dot3 power value allocated on pair B (mandatory)",
-		    cmd_check_dual_sig, NULL, "bAllocated"),
+		    cmd_check_dual_sig_pd, NULL, "bAllocated"),
 		NULL, "802.3bt power value allocated on pair B in milliwatts",
 		NULL, cmd_store_env_value_and_pop2, "bAllocated");
 
